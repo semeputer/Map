@@ -9,16 +9,56 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css"/>
+
+  <!-- Custom Data -->
   <script src="z_data88.js"></script>
 
   <style>
-    /* [your original styles remain unchanged here] */
-    html, body { margin: 0; height: 100%; font-family: 'Segoe UI', sans-serif; }
-    /* ... omitted for brevity ... */
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    #app {
+      display: flex;
+      height: 100%;
+    }
+
+    #sidebar {
+      width: 250px;
+      background: #f5f5f5;
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+    #sidebar.collapsed {
+      display: none;
+    }
+
+    #map {
+      flex: 1;
+      height: 100%;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .dark-mode {
+      background-color: #1e1e1e;
+      color: white;
+    }
   </style>
 </head>
-
 <body>
+
 <!-- 🔐 Redirect if not logged in -->
 <script>
   const isLoggedIn = sessionStorage.getItem("loggedIn") === "true";
@@ -28,15 +68,37 @@
 </script>
 
 <div id="app">
-  <!-- [sidebar and map layout same as yours] -->
-  <!-- ... -->
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div class="topbar">
+      <button id="toggleBtn">Toggle Sidebar</button>
+      <button id="themeToggle">🌙 Theme</button>
+      <button onclick="logout()">🚪 Logout</button>
+    </div>
+
+    <input id="userCoord" type="text" placeholder="Enter lat,lng" value="14.6188,121.0829" />
+    <input id="zoomSlider" type="range" min="10" max="20" value="16" />
+
+    <div>
+      <button onclick="toggleUtil()">Utilization Filters <i id="utilArrow" class="fa fa-chevron-down"></i></button>
+      <div id="utilOptions">
+        <label><input type="checkbox" class="utilFilter" value="low" checked> Low</label><br>
+        <label><input type="checkbox" class="utilFilter" value="mid" checked> Mid</label><br>
+        <label><input type="checkbox" class="utilFilter" value="high" checked> High</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map container -->
+  <div id="map"></div>
 </div>
 
+<!-- Leaflet Scripts -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
 
+<!-- Main Script -->
 <script>
-// ✅ Use sessionStorage (not localStorage) for short-lived login
 let csvData = [];
 let map = L.map('map', { zoomControl: false }).setView([14.6188, 121.0829], 16);
 let markers = [];
@@ -46,6 +108,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
+// Sync zoom with slider
 document.getElementById("zoomSlider").value = map.getZoom();
 document.getElementById("zoomSlider").addEventListener('input', () => {
   map.setZoom(parseInt(document.getElementById("zoomSlider").value));
@@ -54,6 +117,7 @@ map.on('zoomend', () => {
   document.getElementById("zoomSlider").value = map.getZoom();
 });
 
+// Locate control
 L.control.locate({
   position: 'bottomright',
   setView: true,
@@ -66,7 +130,7 @@ L.control.locate({
   locateOptions: { enableHighAccuracy: true }
 }).addTo(map);
 
-// ✅ Decode Base64 from z_data88.js
+// Decode and parse CSV from z_data88.js
 const decoded = atob(encodedData.trim());
 const lines = decoded.split("\n");
 const headers = lines[0].split(",");
@@ -171,10 +235,12 @@ function findNearby() {
   });
 }
 
+// Dark mode toggle
 document.getElementById("themeToggle").addEventListener("click", () => {
   document.body.classList.toggle("dark-mode");
 });
 
+// Logout
 function logout() {
   sessionStorage.removeItem("loggedIn");
   window.location.href = "login.html";
