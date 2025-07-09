@@ -1,8 +1,11 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html>
 <head>
   <title>Login</title>
+  <script>
+    // ✅ Clear login state every time login page loads
+    localStorage.removeItem("loggedIn");
+  </script>
 </head>
 <body>
   <h2>Login</h2>
