@@ -11,73 +11,196 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css"/>
 
   <style>
-    /* Add your map styles here if needed */
-    body, html {
+    html, body {
       margin: 0;
-      padding: 0;
       height: 100%;
       font-family: 'Segoe UI', sans-serif;
     }
-    #map {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      right: 0;
-      left: 0;
+
+    #app {
+      display: flex;
+      height: 100%;
+      overflow: hidden;
     }
-    #coordBox, .custom-zoom, #themeToggle, #logoutBtn {
-      position: absolute;
-      z-index: 1000;
-    }
-    #coordBox {
-      top: 10px;
-      left: 10px;
-      background: white;
-      padding: 8px;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-    .custom-zoom {
-      bottom: 60px;
-      left: 10px;
-    }
-    #themeToggle {
-      bottom: 20px;
-      right: 20px;
-      background: white;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-    #logoutBtn {
-      top: 10px;
-      right: 10px;
-      background: crimson;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
+
     #sidebar {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 250px;
-      background: white;
-      z-index: 1000;
-      transition: transform 0.3s ease;
+      width: 280px;
+      background: #fff;
+      border-right: 1px solid #ddd;
+      padding: 20px;
+      box-sizing: border-box;
+      transition: width 0.3s ease;
+      position: relative;
+      color: #000;
     }
+
     #sidebar.collapsed {
-      transform: translateX(-100%);
+      width: 60px;
+      padding: 20px 10px;
     }
+
+    #sidebar.collapsed .sidebar-content {
+      display: none;
+    }
+
     #toggleBtn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
       position: absolute;
-      top: 10px;
-      left: 250px;
+      top: 15px;
+      right: 15px;
+      color: #000;
+    }
+
+    .filter-group {
+      margin-top: 30px;
+    }
+
+    .util-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .util-options.hidden {
+      display: none;
+    }
+
+    .filter-group label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    #map {
+      flex: 1;
+      height: 100%;
+      position: relative;
+    }
+
+    #coordBox {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #000;
+    }
+
+    #coordBox select, #coordBox input {
+      padding: 6px 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #coordBox select {
+      width: 120px;
+    }
+
+    #coordBox input {
+      width: 160px;
+    }
+
+    .custom-zoom {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(4px);
+      padding: 6px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.3s ease;
+      opacity: 0.4;
+    }
+
+    .custom-zoom:hover {
+      opacity: 1;
+    }
+
+    .custom-zoom input[type=range] {
+      writing-mode: bt-lr;
+      -webkit-appearance: slider-vertical;
+      width: 30px;
+      height: 120px;
+      cursor: pointer;
+    }
+
+    .leaflet-control-locate {
+      width: 34px !important;
+      height: 34px !important;
+      border-radius: 4px !important;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
+      margin-top: 8px !important;
+    }
+
+    #themeToggle {
+      position: absolute;
+      bottom: 66px;
+      right: 13px;
+      background: #fff;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      font-size: 16px;
       z-index: 1001;
+    }
+
+    #logoutBtn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #dc3545;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    body.dark-mode #sidebar {
+      background: #1e1e1e;
+      color: #fff;
+    }
+
+    body.dark-mode #coordBox {
+      background: #333;
+      color: #fff;
+    }
+
+    body.dark-mode #toggleBtn {
+      color: #fff;
+    }
+
+    @media (max-width: 768px) {
+      #coordBox {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      #coordBox select, #coordBox input {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -85,7 +208,7 @@
 
 <!-- 🔐 Redirect if not logged in -->
 <script>
-  if (sessionStorage.getItem("loggedIn") !== "true") {
+  if (localStorage.getItem("loggedIn") !== "true") {
     window.location.href = "login.html";
   }
 </script>
@@ -115,12 +238,12 @@
         <option value="city">City</option>
         <option value="barangay">Barangay</option>
       </select>
-      <input type="text" id="userCoord" placeholder="Lat,Lng" value="14.6188,121.0829" oninput="findNearby()" />
+      <input type="text" id="userCoord" placeholder="Lat,Lng" value="" oninput="findNearby()" />
     </div>
     <div class="custom-zoom">
       <input type="range" id="zoomSlider" min="1" max="20" step="1" />
     </div>
-    <div id="themeToggle">🌃</div>
+    <div id="themeToggle">🌓</div>
     <button id="logoutBtn" onclick="logout()">Logout</button>
   </div>
 </div>
@@ -164,7 +287,7 @@ Papa.parse('points.csv?v=' + new Date().getTime(), {
       ...row,
       lat: parseFloat(row.Latitude),
       lng: parseFloat(row.Longitude),
-      utilization: parseFloat((row.Utilization || '').replace('%', ''))
+      utilization: parseFloat(row.Utilization)
     }));
     findNearby();
   }
@@ -261,7 +384,7 @@ document.getElementById("themeToggle").addEventListener("click", () => {
 });
 
 function logout() {
-  sessionStorage.removeItem("loggedIn");
+  localStorage.removeItem("loggedIn");
   window.location.href = "login.html";
 }
 </script>
