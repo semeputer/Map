@@ -11,14 +11,81 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css"/>
 
   <style>
-    /* ...styles unchanged for brevity... */
+    /* Add your map styles here if needed */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+    }
+    #coordBox, .custom-zoom, #themeToggle, #logoutBtn {
+      position: absolute;
+      z-index: 1000;
+    }
+    #coordBox {
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 8px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .custom-zoom {
+      bottom: 60px;
+      left: 10px;
+    }
+    #themeToggle {
+      bottom: 20px;
+      right: 20px;
+      background: white;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    #logoutBtn {
+      top: 10px;
+      right: 10px;
+      background: crimson;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #sidebar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 250px;
+      background: white;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+    }
+    #sidebar.collapsed {
+      transform: translateX(-100%);
+    }
+    #toggleBtn {
+      position: absolute;
+      top: 10px;
+      left: 250px;
+      z-index: 1001;
+    }
   </style>
 </head>
 <body>
 
 <!-- 🔐 Redirect if not logged in -->
 <script>
-  if (localStorage.getItem("loggedIn") !== "true") {
+  if (sessionStorage.getItem("loggedIn") !== "true") {
     window.location.href = "login.html";
   }
 </script>
@@ -194,7 +261,7 @@ document.getElementById("themeToggle").addEventListener("click", () => {
 });
 
 function logout() {
-  localStorage.removeItem("loggedIn");
+  sessionStorage.removeItem("loggedIn");
   window.location.href = "login.html";
 }
 </script>
