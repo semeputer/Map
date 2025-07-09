@@ -1,119 +1,27 @@
+<!-- login.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      background: linear-gradient(to right, #4e54c8, #8f94fb);
-      font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .login-card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      padding: 30px 40px;
-      width: 100%;
-      max-width: 350px;
-      text-align: center;
-      animation: fadeIn 0.6s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .login-card h2 {
-      margin-bottom: 24px;
-      color: #333;
-    }
-
-    .login-card input {
-      width: 100%;
-      padding: 12px 14px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 14px;
-      transition: 0.3s;
-    }
-
-    .login-card input:focus {
-      outline: none;
-      border-color: #4e54c8;
-      box-shadow: 0 0 0 3px rgba(78, 84, 200, 0.2);
-    }
-
-    .login-card button {
-      width: 100%;
-      padding: 12px;
-      background: #4e54c8;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .login-card button:hover {
-      background: #3c40a1;
-    }
-
-    .login-card .error {
-      color: red;
-      font-size: 14px;
-      margin-top: 10px;
-      display: none;
-    }
-  </style>
-
-  <script>
-    // ✅ Clear login state every time login page loads
-    window.onload = function () {
-      sessionStorage.removeItem("loggedIn");
-      localStorage.removeItem("loggedIn");
-    };
-  </script>
 </head>
 <body>
-  <div class="login-card">
-    <h2>Login</h2>
-    <input id="user" type="text" placeholder="Username" />
-    <input id="pass" type="password" placeholder="Password" />
-    <button onclick="login()">Login</button>
-    <div id="error" class="error">Invalid credentials</div>
-  </div>
+  <h2>Login</h2>
+  <input id="user" placeholder="Username"><br>
+  <input id="pass" type="password" placeholder="Password"><br>
+  <button onclick="login()">Login</button>
 
   <script>
-    function login() {
-      const u = document.getElementById("user").value.trim();
-      const p = document.getElementById("pass").value.trim();
-      const errorBox = document.getElementById("error");
+  function login() {
+    const u = document.getElementById("user").value;
+    const p = document.getElementById("pass").value;
 
-      // Hardcoded credentials for demo (can be replaced with CSV-based check later)
-      if (u === "admin" && p === "1234") {
-        sessionStorage.setItem("loggedIn", "true");
-        window.location.href = "index.html";
-      } else {
-        errorBox.style.display = "block";
-      }
+    if (u === "admin" && p === "1234") {
+      localStorage.setItem("loggedIn", "true");
+      window.location.href = "index.html";
+    } else {
+      alert("Invalid credentials");
     }
+  }
   </script>
 </body>
 </html>
