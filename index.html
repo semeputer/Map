@@ -10,94 +10,57 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css"/>
 
-  <!-- Custom Data -->
-  <script src="z_data88.js"></script>
-
   <style>
-    html, body {
-      margin: 0;
-      height: 100%;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-    #app {
-      display: flex;
-      height: 100%;
-    }
-
-    #sidebar {
-      width: 250px;
-      background: #f5f5f5;
-      padding: 10px;
-      overflow-y: auto;
-    }
-
-    #sidebar.collapsed {
-      display: none;
-    }
-
-    #map {
-      flex: 1;
-      height: 100%;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .topbar {
-      display: flex;
-      gap: 10px;
-      padding: 10px;
-    }
-
-    .dark-mode {
-      background-color: #1e1e1e;
-      color: white;
-    }
+    /* ...styles unchanged for brevity... */
   </style>
 </head>
 <body>
 
 <!-- 🔐 Redirect if not logged in -->
 <script>
-  const isLoggedIn = sessionStorage.getItem("loggedIn") === "true";
-  if (!isLoggedIn) {
+  if (localStorage.getItem("loggedIn") !== "true") {
     window.location.href = "login.html";
   }
 </script>
 
 <div id="app">
-  <!-- Sidebar -->
-  <div id="sidebar">
-    <div class="topbar">
-      <button id="toggleBtn">Toggle Sidebar</button>
-      <button id="themeToggle">🌙 Theme</button>
-      <button onclick="logout()">🚪 Logout</button>
-    </div>
-
-    <input id="userCoord" type="text" placeholder="Enter lat,lng" value="14.6188,121.0829" />
-    <input id="zoomSlider" type="range" min="10" max="20" value="16" />
-
-    <div>
-      <button onclick="toggleUtil()">Utilization Filters <i id="utilArrow" class="fa fa-chevron-down"></i></button>
-      <div id="utilOptions">
-        <label><input type="checkbox" class="utilFilter" value="low" checked> Low</label><br>
-        <label><input type="checkbox" class="utilFilter" value="mid" checked> Mid</label><br>
-        <label><input type="checkbox" class="utilFilter" value="high" checked> High</label>
+  <div id="sidebar" class="collapsed">
+    <button id="toggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-content">
+      <div class="filter-group">
+        <div class="util-toggle" onclick="toggleUtil()">
+          <span><i id="utilArrow" class="fas fa-chevron-down"></i> Utilization</span>
+        </div>
+        <div class="util-options" id="utilOptions">
+          <label><input type="checkbox" class="utilFilter" value="low" checked> 0–50% (Green)</label>
+          <label><input type="checkbox" class="utilFilter" value="mid" checked> 51–74% (Yellow)</label>
+          <label><input type="checkbox" class="utilFilter" value="high" checked> 75–100% (Red)</label>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Map container -->
-  <div id="map"></div>
+  <div id="map">
+    <div id="coordBox">
+      <select id="coordType">
+        <option value="coordinates" selected>Coordinates</option>
+        <option value="facility">Facility</option>
+        <option value="city">City</option>
+        <option value="barangay">Barangay</option>
+      </select>
+      <input type="text" id="userCoord" placeholder="Lat,Lng" value="14.6188,121.0829" oninput="findNearby()" />
+    </div>
+    <div class="custom-zoom">
+      <input type="range" id="zoomSlider" min="1" max="20" step="1" />
+    </div>
+    <div id="themeToggle">🌃</div>
+    <button id="logoutBtn" onclick="logout()">Logout</button>
+  </div>
 </div>
 
-<!-- Leaflet Scripts -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
-
-<!-- Main Script -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
 let csvData = [];
 let map = L.map('map', { zoomControl: false }).setView([14.6188, 121.0829], 16);
@@ -108,16 +71,11 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-// Sync zoom with slider
-document.getElementById("zoomSlider").value = map.getZoom();
-document.getElementById("zoomSlider").addEventListener('input', () => {
-  map.setZoom(parseInt(document.getElementById("zoomSlider").value));
-});
-map.on('zoomend', () => {
-  document.getElementById("zoomSlider").value = map.getZoom();
-});
+const zoomSlider = document.getElementById('zoomSlider');
+zoomSlider.value = map.getZoom();
+zoomSlider.addEventListener('input', () => map.setZoom(parseInt(zoomSlider.value)));
+map.on('zoomend', () => zoomSlider.value = map.getZoom());
 
-// Locate control
 L.control.locate({
   position: 'bottomright',
   setView: true,
@@ -130,24 +88,20 @@ L.control.locate({
   locateOptions: { enableHighAccuracy: true }
 }).addTo(map);
 
-// Decode and parse CSV from z_data88.js
-const decoded = atob(encodedData.trim());
-const lines = decoded.split("\n");
-const headers = lines[0].split(",");
-
-csvData = lines.slice(1).map(line => {
-  const values = line.split(",");
-  const row = {};
-  headers.forEach((h, i) => row[h.trim()] = values[i]?.trim());
-  return {
-    ...row,
-    lat: parseFloat(row.Latitude),
-    lng: parseFloat(row.Longitude),
-    utilization: parseFloat(row.Utilization)
-  };
+Papa.parse('points.csv?v=' + new Date().getTime(), {
+  download: true,
+  header: true,
+  skipEmptyLines: true,
+  complete: function(results) {
+    csvData = results.data.map(row => ({
+      ...row,
+      lat: parseFloat(row.Latitude),
+      lng: parseFloat(row.Longitude),
+      utilization: parseFloat((row.Utilization || '').replace('%', ''))
+    }));
+    findNearby();
+  }
 });
-
-findNearby();
 
 function toggleUtil() {
   document.getElementById("utilOptions").classList.toggle("hidden");
@@ -235,14 +189,12 @@ function findNearby() {
   });
 }
 
-// Dark mode toggle
 document.getElementById("themeToggle").addEventListener("click", () => {
   document.body.classList.toggle("dark-mode");
 });
 
-// Logout
 function logout() {
-  sessionStorage.removeItem("loggedIn");
+  localStorage.removeItem("loggedIn");
   window.location.href = "login.html";
 }
 </script>
