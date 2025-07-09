@@ -79,13 +79,16 @@
       color: red;
       font-size: 14px;
       margin-top: 10px;
+      display: none;
     }
   </style>
 
   <script>
-    // Clear login state on load
-    localStorage.removeItem("loggedIn");
-    sessionStorage.removeItem("loggedIn");
+    // ✅ Clear login state every time login page loads
+    window.onload = function () {
+      sessionStorage.removeItem("loggedIn");
+      localStorage.removeItem("loggedIn");
+    };
   </script>
 </head>
 <body>
@@ -94,7 +97,7 @@
     <input id="user" type="text" placeholder="Username" />
     <input id="pass" type="password" placeholder="Password" />
     <button onclick="login()">Login</button>
-    <div id="error" class="error" style="display:none;">Invalid credentials</div>
+    <div id="error" class="error">Invalid credentials</div>
   </div>
 
   <script>
@@ -103,6 +106,7 @@
       const p = document.getElementById("pass").value.trim();
       const errorBox = document.getElementById("error");
 
+      // Hardcoded credentials for demo (can be replaced with CSV-based check later)
       if (u === "admin" && p === "1234") {
         sessionStorage.setItem("loggedIn", "true");
         window.location.href = "index.html";
