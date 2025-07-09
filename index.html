@@ -248,9 +248,10 @@
   </div>
 </div>
 
+<!-- Scripts -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="z_data88.js"></script>
 <script>
 let csvData = [];
 let map = L.map('map', { zoomControl: false }).setView([14.6188, 121.0829], 16);
@@ -278,20 +279,27 @@ L.control.locate({
   locateOptions: { enableHighAccuracy: true }
 }).addTo(map);
 
-Papa.parse('points.csv?v=' + new Date().getTime(), {
-  download: true,
-  header: true,
-  skipEmptyLines: true,
-  complete: function(results) {
-    csvData = results.data.map(row => ({
-      ...row,
-      lat: parseFloat(row.Latitude),
-      lng: parseFloat(row.Longitude),
-      utilization: parseFloat(row.Utilization)
-    }));
-    findNearby();
-  }
-});
+// Parse from Base64 CSV string
+function parseCSVFromBase64(encoded) {
+  const decoded = atob(encoded);
+  const lines = decoded.trim().split('\n');
+  const headers = lines[0].split(',');
+  return lines.slice(1).map(line => {
+    const values = line.split(',');
+    const obj = {};
+    headers.forEach((h, i) => obj[h.trim()] = values[i]?.trim());
+    return {
+      ...obj,
+      lat: parseFloat(obj.Latitude),
+      lng: parseFloat(obj.Longitude),
+      utilization: parseFloat(obj.Utilization)
+    };
+  });
+}
+
+// Initialize data
+csvData = parseCSVFromBase64(encodedData);
+findNearby();
 
 function toggleUtil() {
   document.getElementById("utilOptions").classList.toggle("hidden");
