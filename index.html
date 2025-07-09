@@ -30,13 +30,20 @@
     #coordBox input { width: 160px; }
     .custom-zoom { position: absolute; bottom: 20px; left: 20px; z-index: 1000; background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(4px); padding: 6px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: opacity 0.3s ease; opacity: 0.4; }
     .custom-zoom:hover { opacity: 1; }
-    .custom-zoom input[type=range] {
-      writing-mode: vertical-lr;
-      direction: rtl;
-      width: 30px;
-      height: 120px;
-      cursor: pointer;
-      appearance: none;
+    .custom-zoom input[type=range]::-webkit-slider-thumb {
+      background: #333;
+      border: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+    }
+
+    .custom-zoom input[type=range]::-moz-range-thumb {
+      background: #333;
+      border: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
     }
     .leaflet-control-locate { width: 34px !important; height: 34px !important; border-radius: 4px !important; box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important; margin-top: 8px !important; }
     #themeToggle { position: absolute; bottom: 66px; right: 13px; background: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.3); font-size: 16px; z-index: 1001; }
