@@ -251,30 +251,32 @@
 <!-- Scripts -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
+
 <script>
-    const AUTH_TOKEN = "your-secret-token"; // must match what's in your Worker
-    
-    // Fetch encoded data securely from Cloudflare Worker
-    fetch("https://samplemap.t-furrteen.workers.dev/api/mapdata", {
-      headers: {
-        Authorization: `Bearer ${AUTH_TOKEN}`
-      }
-    })
-    .then(res => {
-      if (!res.ok) throw new Error("Unauthorized or data fetch error.");
-      return res.json();
-    })
-    .then(data => {
-      csvData = parseCSVFromBase64(data.encodedData);
-      findNearby();
-    })
-    .catch(err => {
-      console.error("Error loading data:", err);
-      alert("Unable to load map data. Check access or token.");
-    });
-</script>
-<script>
+const AUTH_TOKEN = "your-secret-token"; // 🔐 Match this with your Worker
+
 let csvData = [];
+
+fetch("https://samplemap.t-furrteen.workers.dev/api/mapdata", {
+  headers: {
+    Authorization: `Bearer ${AUTH_TOKEN}`
+  }
+})
+.then(res => {
+  if (!res.ok) throw new Error("Unauthorized or data fetch error.");
+  return res.json();
+})
+.then(data => {
+  csvData = parseCSVFromBase64(data.encodedData);
+  findNearby();
+})
+.catch(err => {
+  console.error("Error loading data:", err);
+  alert("Unable to load map data. Check access or token.");
+});
+</script>
+
+<script>
 let map = L.map('map', { zoomControl: false }).setView([14.6188, 121.0829], 16);
 let markers = [];
 let userMarker;
@@ -300,7 +302,6 @@ L.control.locate({
   locateOptions: { enableHighAccuracy: true }
 }).addTo(map);
 
-// Parse from Base64 CSV string
 function parseCSVFromBase64(encoded) {
   const decoded = atob(encoded);
   const lines = decoded.trim().split('\n');
@@ -317,10 +318,6 @@ function parseCSVFromBase64(encoded) {
     };
   });
 }
-
-// Initialize data
-csvData = parseCSVFromBase64(encodedData);
-findNearby();
 
 function toggleUtil() {
   document.getElementById("utilOptions").classList.toggle("hidden");
@@ -417,5 +414,6 @@ function logout() {
   window.location.href = "login.html";
 }
 </script>
+
 </body>
 </html>
