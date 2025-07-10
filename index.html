@@ -85,11 +85,11 @@
 <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
 <script>
 let csvData = [];
-const fingerprint = localStorage.getItem("fingerprint");
 
+// Secure fetch with Bearer token
 fetch("https://samplemap.t-furrteen.workers.dev/api/mapdata", {
   headers: {
-    "x-fingerprint": fingerprint
+    "Authorization": "Bearer your-very-strong-secret-token"
   }
 })
 .then(res => {
@@ -102,7 +102,7 @@ fetch("https://samplemap.t-furrteen.workers.dev/api/mapdata", {
 })
 .catch(err => {
   console.error("Error loading data:", err);
-  alert("Access denied or invalid fingerprint.");
+  alert("Access denied or data fetch failed.");
 });
 
 function parseCSVFromBase64(encoded) {
@@ -230,7 +230,6 @@ function getColor(util) {
 
 function logout() {
   localStorage.removeItem("loggedIn");
-  localStorage.removeItem("fingerprint");
   window.location.href = "login.html";
 }
 </script>
