@@ -86,7 +86,6 @@
 <script>
 let csvData = [];
 
-// Secure fetch with Bearer token
 fetch("https://samplemap.t-furrteen.workers.dev/api/mapdata", {
   headers: {
     "Authorization": "Bearer my-strong-secret-token"
@@ -99,33 +98,48 @@ fetch("https://samplemap.t-furrteen.workers.dev/api/mapdata", {
 .then(data => {
   try {
     csvData = parseCSVFromBase64(data.encodedData);
-    console.log("Parsed CSV Data:", csvData);
+    console.log("Parsed Data:", csvData);
     findNearby();
-  } catch (parseErr) {
-    console.error("Failed to parse base64 or CSV:", parseErr);
+  } catch (e) {
+    console.error("Failed to parse CSV data:", e);
     alert("Data received but failed to process.");
   }
 })
 .catch(err => {
-  console.error("Failed to fetch map data:", err);
-  alert("Access denied or fetch error.");
+  console.error("Error loading data:", err);
+  alert("Access denied or data fetch failed.");
 });
 
 function parseCSVFromBase64(encoded) {
   const decoded = atob(encoded);
+  console.log("Decoded CSV:", decoded);
   const lines = decoded.trim().split('\n');
-  const headers = lines[0].split(',');
-  return lines.slice(1).map(line => {
+  if (lines.length < 2) throw new Error("No data lines found");
+
+  const headers = lines[0].split(',').map(h => h.trim());
+  const latIndex = headers.findIndex(h => /lat/i.test(h));
+  const lngIndex = headers.findIndex(h => /lon|lng/i.test(h));
+  const utilIndex = headers.findIndex(h => /util/i.test(h));
+
+  if (latIndex === -1 || lngIndex === -1 || utilIndex === -1) {
+    throw new Error("Required headers missing in CSV");
+  }
+
+  return lines.slice(1).map((line, idx) => {
     const values = line.split(',');
+    if (values.length < headers.length) {
+      console.warn(`Skipping malformed line ${idx + 2}`);
+      return null;
+    }
+    const lat = parseFloat(values[latIndex]);
+    const lng = parseFloat(values[lngIndex]);
+    const util = parseFloat(values[utilIndex]);
+    if (isNaN(lat) || isNaN(lng) || isNaN(util)) return null;
+
     const obj = {};
-    headers.forEach((h, i) => obj[h.trim()] = values[i]?.trim());
-    return {
-      ...obj,
-      lat: parseFloat(obj.Latitude),
-      lng: parseFloat(obj.Longitude),
-      utilization: parseFloat(obj.Utilization)
-    };
-  });
+    headers.forEach((h, i) => obj[h] = values[i]?.trim());
+    return { ...obj, lat, lng, utilization: util };
+  }).filter(Boolean);
 }
 
 function toggleUtil() {
