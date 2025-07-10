@@ -31,11 +31,12 @@
 
     #coordBox {
       position: absolute;
-      top: 20px;
-      left: 20px;
+      top: 70px; /* a bit lower to not overlap the burger icon */
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 1000;
       background: white;
-      padding: 10px;
+      padding: 12px;
       border-radius: 8px;
       box-shadow: 0 0 8px rgba(0,0,0,0.1);
       display: flex;
@@ -112,7 +113,7 @@
 
     #themeToggle {
       position: absolute;
-      bottom: 66px;
+      bottom: 110px;
       right: 13px;
       background: #fff;
       width: 34px;
@@ -147,13 +148,9 @@
 
     @media (max-width: 768px) {
       #coordBox {
-        top: 60px; /* push below burger */
-        left: 50%;
-        transform: translateX(-50%);
-        width: calc(100% - 40px);
         flex-direction: column;
         align-items: stretch;
-        padding: 12px;
+        width: calc(100% - 40px);
         gap: 8px;
         display: none;
       }
@@ -179,13 +176,11 @@
       }
 
       .custom-zoom {
-        left: auto;
-        right: 20px;
-        bottom: 100px;
+        display: none;
       }
 
       #themeToggle {
-        bottom: 150px;
+        bottom: 100px; /* above geolocation */
         right: 20px;
       }
     }
