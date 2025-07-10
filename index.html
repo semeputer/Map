@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Nearby Coordinates Map</title>
 
   <!-- Leaflet & Icons -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css"/>
 
   <style>
     html, body {
@@ -29,11 +29,50 @@
       border-right: 1px solid #ddd;
       padding: 20px;
       box-sizing: border-box;
+      transition: width 0.3s ease;
+      position: relative;
       color: #000;
     }
 
     #sidebar.collapsed {
+      width: 60px;
+      padding: 20px 10px;
+    }
+
+    #sidebar.collapsed .sidebar-content {
       display: none;
+    }
+
+    #toggleBtn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      color: #000;
+    }
+
+    .filter-group {
+      margin-top: 30px;
+    }
+
+    .util-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .util-options.hidden {
+      display: none;
+    }
+
+    .filter-group label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
     }
 
     #map {
@@ -42,53 +81,160 @@
       position: relative;
     }
 
-    #mobileToolbar {
-      display: none;
+    #coordBox {
       position: absolute;
-      top: 60px;
-      left: 10px;
-      right: 10px;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
       background: white;
       padding: 10px;
       border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-      z-index: 1001;
-      gap: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #000;
     }
 
-    #mobileToolbar > * {
-      display: block;
-      width: 100%;
-      margin-bottom: 8px;
-      padding: 10px;
-      font-size: 16px;
+    #coordBox select, #coordBox input {
+      padding: 6px 8px;
+      font-size: 14px;
       border: 1px solid #ccc;
       border-radius: 5px;
-      box-sizing: border-box;
     }
 
-    #mobileToolbar button {
-      background-color: #007bff;
-      color: white;
-      border: none;
+    #coordBox select {
+      width: 120px;
+    }
+
+    #coordBox input {
+      width: 160px;
+    }
+
+    #coordSearchBtn {
+      padding: 6px 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      background: #f0f0f0;
       cursor: pointer;
+    }
+
+    .custom-zoom {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(4px);
+      padding: 6px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.3s ease;
+      opacity: 0.4;
+    }
+
+    .custom-zoom:hover {
+      opacity: 1;
+    }
+
+    .custom-zoom input[type=range] {
+      writing-mode: bt-lr;
+      -webkit-appearance: slider-vertical;
+      width: 30px;
+      height: 120px;
+      cursor: pointer;
+    }
+
+    .leaflet-control-locate {
+      width: 34px !important;
+      height: 34px !important;
+      border-radius: 4px !important;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
+      margin-top: 8px !important;
+    }
+
+    #themeToggle {
+      position: absolute;
+      bottom: 66px;
+      right: 13px;
+      background: #fff;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      font-size: 16px;
+      z-index: 1001;
+    }
+
+    #logoutBtn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #dc3545;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 1001;
     }
 
     #burgerIcon {
-      display: none;
       position: absolute;
-      top: 15px;
-      left: 15px;
-      z-index: 1002;
-      font-size: 24px;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+      font-size: 20px;
+      color: #000;
       background: white;
-      border-radius: 5px;
-      padding: 8px 12px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      padding: 6px;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
       cursor: pointer;
+      display: none;
+    }
+
+    body.dark-mode #sidebar {
+      background: #1e1e1e;
+      color: #fff;
+    }
+
+    body.dark-mode #coordBox {
+      background: #333;
+      color: #fff;
+    }
+
+    body.dark-mode #toggleBtn {
+      color: #fff;
     }
 
     @media (max-width: 768px) {
+      #coordBox {
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 40px);
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px;
+        gap: 8px;
+      }
+
+      #coordBox select,
+      #coordBox input,
+      #coordBox button {
+        width: 100%;
+        margin: 0;
+        font-size: 15px;
+      }
+
       #sidebar {
         display: none;
       }
@@ -97,9 +243,22 @@
         display: block;
       }
 
-      #mobileToolbar {
-        display: flex;
-        flex-direction: column;
+      #logoutBtn {
+        top: auto;
+        bottom: 20px;
+        left: 20px;
+        right: auto;
+      }
+
+      .custom-zoom {
+        left: auto;
+        right: 20px;
+        bottom: 100px;
+      }
+
+      #themeToggle {
+        bottom: 150px;
+        right: 20px;
       }
     }
   </style>
@@ -113,20 +272,39 @@
 </script>
 
 <div id="app">
-  <div id="sidebar" class="collapsed"></div>
+  <div id="sidebar" class="collapsed">
+    <button id="toggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-content">
+      <div class="filter-group">
+        <div class="util-toggle" onclick="toggleUtil()">
+          <span><i id="utilArrow" class="fas fa-chevron-down"></i> Utilization</span>
+        </div>
+        <div class="util-options" id="utilOptions">
+          <label><input type="checkbox" class="utilFilter" value="low" checked> 0–50% (Green)</label>
+          <label><input type="checkbox" class="utilFilter" value="mid" checked> 51–74% (Yellow)</label>
+          <label><input type="checkbox" class="utilFilter" value="high" checked> 75–100% (Red)</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="map">
     <div id="burgerIcon"><i class="fas fa-bars"></i></div>
-    <div id="mobileToolbar" style="display: none;">
-      <div id="toolbarIcon"><i class="fas fa-bars"></i> Menu</div>
+    <div id="coordBox">
       <select id="coordType">
         <option value="coordinates" selected>Coordinates</option>
         <option value="facility">Facility</option>
         <option value="city">City</option>
         <option value="barangay">Barangay</option>
       </select>
-      <input type="text" id="userCoord" placeholder="Lat,Lng" />
+      <input type="text" id="userCoord" placeholder="Lat,Lng" value="" />
       <button id="coordSearchBtn">Search</button>
     </div>
+    <div class="custom-zoom">
+      <input type="range" id="zoomSlider" min="1" max="20" step="1" />
+    </div>
+    <div id="themeToggle">🌓</div>
+    <button id="logoutBtn" onclick="logout()">Logout</button>
   </div>
 </div>
 
@@ -142,6 +320,11 @@ let userMarker;
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
+
+const zoomSlider = document.getElementById('zoomSlider');
+zoomSlider.value = map.getZoom();
+zoomSlider.addEventListener('input', () => map.setZoom(parseInt(zoomSlider.value)));
+map.on('zoomend', () => zoomSlider.value = map.getZoom());
 
 L.control.locate({
   position: 'bottomright',
@@ -173,6 +356,37 @@ function parseCSVFromBase64(encoded) {
 }
 
 csvData = parseCSVFromBase64(encodedData);
+findNearby();
+
+function toggleUtil() {
+  document.getElementById("utilOptions").classList.toggle("hidden");
+  document.getElementById("utilArrow").classList.toggle("fa-chevron-down");
+  document.getElementById("utilArrow").classList.toggle("fa-chevron-up");
+}
+
+document.getElementById("toggleBtn").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.toggle("collapsed");
+});
+
+document.querySelectorAll('.utilFilter').forEach(cb => {
+  cb.addEventListener('change', findNearby);
+});
+
+document.getElementById("coordSearchBtn").addEventListener("click", () => {
+  const coordType = document.getElementById("coordType").value;
+  if (coordType === "coordinates") {
+    findNearby();
+  }
+});
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const toRad = x => x * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 function getUtilCategory(util) {
   if (util <= 50) return 'low';
@@ -186,15 +400,6 @@ function getColor(util) {
   return 'red';
 }
 
-function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const toRad = x => x * Math.PI / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
 function findNearby() {
   const input = document.getElementById("userCoord").value.trim();
   const parts = input.split(",");
@@ -203,6 +408,8 @@ function findNearby() {
   const userLat = parseFloat(parts[0]);
   const userLng = parseFloat(parts[1]);
   if (isNaN(userLat) || isNaN(userLng)) return;
+
+  const selected = Array.from(document.querySelectorAll('.utilFilter:checked')).map(cb => cb.value);
 
   markers.forEach(m => map.removeLayer(m));
   markers = [];
@@ -221,7 +428,7 @@ function findNearby() {
     if (isNaN(point.lat) || isNaN(point.lng) || isNaN(point.utilization)) return;
     const dist = haversine(userLat, userLng, point.lat, point.lng);
     const category = getUtilCategory(point.utilization);
-    if (dist <= 0.5) {
+    if (dist <= 0.5 && selected.includes(category)) {
       const color = getColor(point.utilization);
       const popupHtml = `
         <strong>${point.Node || 'Unknown'}</strong><br>
@@ -244,17 +451,14 @@ function findNearby() {
   });
 }
 
-document.getElementById("coordSearchBtn").addEventListener("click", () => {
-  const coordType = document.getElementById("coordType").value;
-  if (coordType === "coordinates") {
-    findNearby();
-  }
+document.getElementById("themeToggle").addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
 });
 
-document.getElementById("burgerIcon").addEventListener("click", () => {
-  const toolbar = document.getElementById("mobileToolbar");
-  toolbar.style.display = toolbar.style.display === "none" ? "flex" : "none";
-});
+function logout() {
+  localStorage.removeItem("loggedIn");
+  window.location.href = "login.html";
+}
 </script>
 </body>
 </html>
