@@ -1,3 +1,5 @@
+MOBILE HTML
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,45 +45,6 @@
       display: block;
     }
 
-    #funnelToggle {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      z-index: 1100;
-      background: white;
-      border: none;
-      font-size: 22px;
-      padding: 6px 10px;
-      border-radius: 5px;
-      box-shadow: 0 0 4px rgba(0,0,0,0.2);
-      cursor: pointer;
-    }
-
-    #mobileSidebar {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: white;
-      z-index: 1200;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    #closeSidebar {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: #eee;
-      border: none;
-      font-size: 24px;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
     #coordBox {
       position: absolute;
       top: 70px;
@@ -115,6 +78,7 @@
       border-radius: 5px;
       width: 93%;
     }
+    
 
     #coordBox.mobile-hidden {
       display: none !important;
@@ -151,21 +115,6 @@
 <body>
 
 <div id="map">
-  <!-- Funnel Button -->
-  <button id="funnelToggle">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M3 4h18l-7 9v5l-4 2v-7L3 4z"/>
-    </svg>
-  </button>
-
-  <!-- Sidebar -->
-  <div id="mobileSidebar">
-    <button id="closeSidebar">&times;</button>
-    <h3 style="margin-top:60px;">Sidebar Content</h3>
-    <p>This panel can hold filters, summaries, etc.</p>
-  </div>
-
-  <!-- Original hamburger still present -->
   <button id="mobileBurger"><i class="fas fa-bars"></i></button>
 
   <div id="coordBox" class="mobile-hidden">
@@ -313,17 +262,6 @@ document.getElementById("themeToggle").addEventListener("click", () => {
 
 document.getElementById("mobileBurger").addEventListener("click", () => {
   document.getElementById("coordBox").classList.toggle("mobile-hidden");
-});
-
-document.getElementById("funnelToggle").addEventListener("click", () => {
-  document.getElementById("coordBox").classList.add("mobile-hidden");
-  document.getElementById("funnelToggle").style.display = "none";
-  document.getElementById("mobileSidebar").style.display = "block";
-});
-
-document.getElementById("closeSidebar").addEventListener("click", () => {
-  document.getElementById("mobileSidebar").style.display = "none";
-  document.getElementById("funnelToggle").style.display = "block";
 });
 </script>
 </body>
