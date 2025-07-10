@@ -1,0 +1,208 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Marikina City"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              121.1,
+              14.65
+            ],
+            [
+              121.13,
+              14.66
+            ],
+            [
+              121.12,
+              14.63
+            ],
+            [
+              121.1,
+              14.65
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Quezon City"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              121.03,
+              14.67
+            ],
+            [
+              121.1,
+              14.7
+            ],
+            [
+              121.09,
+              14.65
+            ],
+            [
+              121.03,
+              14.67
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Pasig City"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              121.06,
+              14.58
+            ],
+            [
+              121.1,
+              14.6
+            ],
+            [
+              121.09,
+              14.56
+            ],
+            [
+              121.06,
+              14.58
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Cainta"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              121.12,
+              14.58
+            ],
+            [
+              121.15,
+              14.6
+            ],
+            [
+              121.14,
+              14.56
+            ],
+            [
+              121.12,
+              14.58
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Antipolo"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              121.18,
+              14.6
+            ],
+            [
+              121.22,
+              14.62
+            ],
+            [
+              121.2,
+              14.57
+            ],
+            [
+              121.18,
+              14.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "San Mateo"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              121.12,
+              14.7
+            ],
+            [
+              121.16,
+              14.72
+            ],
+            [
+              121.14,
+              14.68
+            ],
+            [
+              121.12,
+              14.7
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Rodriguez"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              121.15,
+              14.75
+            ],
+            [
+              121.2,
+              14.77
+            ],
+            [
+              121.18,
+              14.72
+            ],
+            [
+              121.15,
+              14.75
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
