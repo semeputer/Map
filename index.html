@@ -2,211 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nearby Coordinates Map</title>
 
-  <!-- Leaflet & Icons -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css"/>
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
   <style>
-    html, body {
-      margin: 0;
-      height: 100%;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-    #app {
-      display: flex;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    #sidebar {
-      width: 280px;
-      background: #fff;
-      border-right: 1px solid #ddd;
-      padding: 20px;
-      box-sizing: border-box;
-      transition: width 0.3s ease;
-      position: relative;
-      color: #000;
-    }
-
-    #sidebar.collapsed {
-      width: 60px;
-      padding: 20px 10px;
-    }
-
-    #sidebar.collapsed .sidebar-content {
-      display: none;
-    }
-
-    #toggleBtn {
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      color: #000;
-    }
-
-    .filter-group {
-      margin-top: 30px;
-    }
-
-    .util-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-    }
-
-    .util-options.hidden {
-      display: none;
-    }
-
-    .filter-group label {
-      display: block;
-      font-size: 14px;
-      margin-bottom: 6px;
-    }
-
-    #map {
-      flex: 1;
-      height: 100%;
-      position: relative;
-    }
-
-    #coordBox {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      z-index: 1000;
-      background: white;
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #000;
-    }
-
-    #coordBox select, #coordBox input {
-      padding: 6px 8px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    #coordBox select {
-      width: 120px;
-    }
-
-    #coordBox input {
-      width: 160px;
-    }
-
-    .custom-zoom {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      z-index: 1000;
-      background: rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(4px);
-      padding: 6px;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      transition: opacity 0.3s ease;
-      opacity: 0.4;
-    }
-
-    .custom-zoom:hover {
-      opacity: 1;
-    }
-
-    .custom-zoom input[type=range] {
-      writing-mode: bt-lr;
-      -webkit-appearance: slider-vertical;
-      width: 30px;
-      height: 120px;
-      cursor: pointer;
-    }
-
-    .leaflet-control-locate {
-      width: 34px !important;
-      height: 34px !important;
-      border-radius: 4px !important;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
-      margin-top: 8px !important;
-    }
-
-    #themeToggle {
-      position: absolute;
-      bottom: 66px;
-      right: 13px;
-      background: #fff;
-      width: 34px;
-      height: 34px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      cursor: pointer;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-      font-size: 16px;
-      z-index: 1001;
-    }
-
-    #logoutBtn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: #dc3545;
-      color: white;
-      padding: 6px 12px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      z-index: 1001;
-    }
-
-    body.dark-mode #sidebar {
-      background: #1e1e1e;
-      color: #fff;
-    }
-
-    body.dark-mode #coordBox {
-      background: #333;
-      color: #fff;
-    }
-
-    body.dark-mode #toggleBtn {
-      color: #fff;
-    }
-
+    html, body { margin: 0; height: 100%; font-family: 'Segoe UI', sans-serif; }
+    #app { display: flex; height: 100%; overflow: hidden; }
+    #sidebar { width: 280px; background: #fff; border-right: 1px solid #ddd; padding: 20px; box-sizing: border-box; transition: width 0.3s ease; position: relative; color: #000; }
+    #sidebar.collapsed { width: 60px; padding: 20px 10px; }
+    #sidebar.collapsed .sidebar-content { display: none; }
+    #toggleBtn { background: none; border: none; font-size: 20px; cursor: pointer; position: absolute; top: 15px; right: 15px; color: #000; }
+    .filter-group { margin-top: 30px; }
+    .util-toggle { display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .util-options.hidden { display: none; }
+    .filter-group label { display: block; font-size: 14px; margin-bottom: 6px; }
+    #map { flex: 1; height: 100%; position: relative; }
+    #coordBox { position: absolute; top: 20px; left: 20px; z-index: 1000; background: white; padding: 10px; border-radius: 8px; box-shadow: 0 0 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; color: #000; }
+    #coordBox select, #coordBox input { padding: 6px 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; }
+    #coordBox select { width: 120px; }
+    #coordBox input { width: 160px; }
+    .custom-zoom { position: absolute; bottom: 20px; left: 20px; z-index: 1000; background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(4px); padding: 6px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: opacity 0.3s ease; opacity: 0.4; }
+    .custom-zoom:hover { opacity: 1; }
+    .custom-zoom input[type=range] { writing-mode: bt-lr; -webkit-appearance: slider-vertical; width: 30px; height: 120px; cursor: pointer; }
+    #themeToggle { position: absolute; bottom: 66px; right: 13px; background: #fff; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.3); font-size: 16px; z-index: 1001; }
+    #logoutBtn { position: absolute; top: 20px; right: 20px; background: #dc3545; color: white; padding: 6px 12px; border: none; border-radius: 5px; cursor: pointer; z-index: 1001; }
+    body.dark-mode #sidebar { background: #1e1e1e; color: #fff; }
+    body.dark-mode #coordBox { background: #333; color: #fff; }
+    body.dark-mode #toggleBtn { color: #fff; }
     @media (max-width: 768px) {
-      #coordBox {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      #coordBox select, #coordBox input {
-        width: 100%;
-      }
+      #coordBox { flex-direction: column; align-items: stretch; }
+      #coordBox select, #coordBox input { width: 100%; }
     }
   </style>
 </head>
 <body>
 
-<!-- 🔐 Redirect if not logged in -->
 <script>
   if (localStorage.getItem("loggedIn") !== "true") {
     window.location.href = "login.html";
@@ -248,18 +81,15 @@
   </div>
 </div>
 
-<!-- Scripts -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
-
 <script>
-const AUTH_TOKEN = "my-strong-secret-token"; // 🔐 Match this with your Worker
-
 let csvData = [];
+const fingerprint = localStorage.getItem("fingerprint");
 
 fetch("https://samplemap.t-furrteen.workers.dev/api/mapdata", {
   headers: {
-    Authorization: `Bearer ${AUTH_TOKEN}`
+    "x-fingerprint": fingerprint
   }
 })
 .then(res => {
@@ -272,35 +102,8 @@ fetch("https://samplemap.t-furrteen.workers.dev/api/mapdata", {
 })
 .catch(err => {
   console.error("Error loading data:", err);
-  alert("Unable to load map data. Check access or token.");
+  alert("Access denied or invalid fingerprint.");
 });
-</script>
-
-<script>
-let map = L.map('map', { zoomControl: false }).setView([14.6188, 121.0829], 16);
-let markers = [];
-let userMarker;
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap contributors'
-}).addTo(map);
-
-const zoomSlider = document.getElementById('zoomSlider');
-zoomSlider.value = map.getZoom();
-zoomSlider.addEventListener('input', () => map.setZoom(parseInt(zoomSlider.value)));
-map.on('zoomend', () => zoomSlider.value = map.getZoom());
-
-L.control.locate({
-  position: 'bottomright',
-  setView: true,
-  flyTo: true,
-  keepCurrentZoomLevel: true,
-  drawCircle: true,
-  showPopup: false,
-  icon: 'fa fa-crosshairs',
-  strings: { title: "Show my location" },
-  locateOptions: { enableHighAccuracy: true }
-}).addTo(map);
 
 function parseCSVFromBase64(encoded) {
   const decoded = atob(encoded);
@@ -333,26 +136,25 @@ document.querySelectorAll('.utilFilter').forEach(cb => {
   cb.addEventListener('change', findNearby);
 });
 
-function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const toRad = x => x * Math.PI / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
+let map = L.map('map', { zoomControl: false }).setView([14.6188, 121.0829], 16);
+let markers = [];
+let userMarker;
 
-function getUtilCategory(util) {
-  if (util <= 50) return 'low';
-  if (util <= 74) return 'mid';
-  return 'high';
-}
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
 
-function getColor(util) {
-  if (util <= 50) return 'green';
-  if (util <= 74) return 'yellow';
-  return 'red';
-}
+const zoomSlider = document.getElementById('zoomSlider');
+zoomSlider.value = map.getZoom();
+zoomSlider.addEventListener('input', () => map.setZoom(parseInt(zoomSlider.value)));
+map.on('zoomend', () => zoomSlider.value = map.getZoom());
+
+L.control.locate({
+  position: 'bottomright', setView: true, flyTo: true, keepCurrentZoomLevel: true,
+  drawCircle: true, showPopup: false, icon: 'fa fa-crosshairs',
+  strings: { title: "Show my location" },
+  locateOptions: { enableHighAccuracy: true }
+}).addTo(map);
 
 function findNearby() {
   const input = document.getElementById("userCoord").value.trim();
@@ -405,15 +207,32 @@ function findNearby() {
   });
 }
 
-document.getElementById("themeToggle").addEventListener("click", () => {
-  document.body.classList.toggle("dark-mode");
-});
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const toRad = x => x * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function getUtilCategory(util) {
+  if (util <= 50) return 'low';
+  if (util <= 74) return 'mid';
+  return 'high';
+}
+
+function getColor(util) {
+  if (util <= 50) return 'green';
+  if (util <= 74) return 'yellow';
+  return 'red';
+}
 
 function logout() {
   localStorage.removeItem("loggedIn");
+  localStorage.removeItem("fingerprint");
   window.location.href = "login.html";
 }
 </script>
-
 </body>
 </html>
