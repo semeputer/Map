@@ -31,32 +31,18 @@
   <button onclick="login()">Login</button>
 
   <script>
-    // Generate or load fingerprint
-    function getFingerprint() {
-      let fp = localStorage.getItem("fingerprint");
-      if (!fp) {
-        // Simple fingerprint: timestamp + random string
-        fp = "fp-" + Date.now() + "-" + Math.random().toString(36).substring(2, 10);
-        localStorage.setItem("fingerprint", fp);
-      }
-      return fp;
-    }
-
     function login() {
       const u = document.getElementById("user").value;
       const p = document.getElementById("pass").value;
 
       if (u === "admin" && p === "1234") {
-        const fp = getFingerprint();
         localStorage.setItem("loggedIn", "true");
-        alert("Your fingerprint:\n" + fp + "\n\nSend this to the admin for access approval.");
         window.location.href = "index.html";
       } else {
         alert("Invalid credentials");
       }
     }
 
-    // Optional: always clear old session
     localStorage.removeItem("loggedIn");
   </script>
 </body>
