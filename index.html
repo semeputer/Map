@@ -11,196 +11,196 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
 
   <style>
-    html, body {
-      margin: 0;
-      height: 100%;
-      font-family: 'Segoe UI', sans-serif;
-    }
+  html, body {
+    margin: 0;
+    height: 100%;
+    font-family: 'Segoe UI', sans-serif;
+  }
 
-    #app {
-      display: flex;
-      height: 100%;
-      overflow: hidden;
-    }
+  #app {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+  }
 
+  #sidebar {
+    width: 300px;
+    background: #f4f4f4;
+    border-right: 1px solid #ccc;
+    overflow-y: auto;
+    padding: 10px;
+    z-index: 900;
+  }
+
+  #map {
+    flex: 1;
+    height: 100%;
+    position: relative;
+  }
+
+  #coordBox {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #000;
+  }
+
+  #coordBox select, #coordBox input {
+    padding: 6px 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  #coordBox select {
+    width: 120px;
+  }
+
+  #coordBox input {
+    width: 160px;
+  }
+
+  #coordBox button {
+    padding: 6px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background: #f0f0f0;
+    cursor: pointer;
+  }
+
+  #burgerIcon {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    font-size: 22px;
+    background: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    cursor: pointer;
+    z-index: 1001;
+    display: none;
+  }
+
+  .custom-zoom {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(4px);
+    padding: 6px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.3s ease;
+    opacity: 0.4;
+  }
+
+  .custom-zoom:hover {
+    opacity: 1;
+  }
+
+  .custom-zoom input[type=range] {
+    writing-mode: bt-lr;
+    -webkit-appearance: slider-vertical;
+    width: 30px;
+    height: 120px;
+    cursor: pointer;
+  }
+
+  #themeToggle {
+    position: absolute;
+    bottom: 66px;
+    right: 13px;
+    background: #fff;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    font-size: 16px;
+    z-index: 1001;
+  }
+
+  #logoutBtn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #dc3545;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1001;
+  }
+
+  body.dark-mode #coordBox {
+    background: #333;
+    color: #fff;
+  }
+
+  @media (max-width: 768px) {
     #sidebar {
-      width: 300px;
-      background: #f4f4f4;
-      border-right: 1px solid #ccc;
-      overflow-y: auto;
-      padding: 10px;
-      z-index: 900;
-    }
-
-    #map {
-      flex: 1;
-      height: 100%;
-      position: relative;
-    }
-
-    #coordBox {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      z-index: 1000;
-      background: white;
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #000;
-    }
-
-    #coordBox select, #coordBox input {
-      padding: 6px 8px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    #coordBox select {
-      width: 120px;
-    }
-
-    #coordBox input {
-      width: 160px;
-    }
-
-    #coordBox button {
-      padding: 6px 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      background: #f0f0f0;
-      cursor: pointer;
-    }
-
-    #burgerIcon {
-      position: absolute;
-      top: 15px;
-      left: 20px;
-      font-size: 22px;
-      background: white;
-      padding: 6px 10px;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      cursor: pointer;
-      z-index: 1001;
       display: none;
     }
 
-    .custom-zoom {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      z-index: 1000;
-      background: rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(4px);
-      padding: 6px;
-      border-radius: 8px;
-      display: flex;
+    #coordBox {
+      top: 80px; /* farther down from burger icon */
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
       flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      transition: opacity 0.3s ease;
-      opacity: 0.4;
+      align-items: stretch;
+      padding: 12px;
+      gap: 8px;
+      display: none;
     }
 
-    .custom-zoom:hover {
-      opacity: 1;
-    }
-
-    .custom-zoom input[type=range] {
-      writing-mode: bt-lr;
-      -webkit-appearance: slider-vertical;
-      width: 30px;
-      height: 120px;
-      cursor: pointer;
-    }
-
-    #themeToggle {
-      position: absolute;
-      bottom: 66px;
-      right: 13px;
-      background: #fff;
-      width: 34px;
-      height: 34px;
+    #coordBox.show {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      cursor: pointer;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-      font-size: 16px;
-      z-index: 1001;
+    }
+
+    #coordBox select, #coordBox input, #coordBox button {
+      width: 100%;
+      font-size: 15px;
+    }
+
+    #burgerIcon {
+      display: block;
     }
 
     #logoutBtn {
-      position: absolute;
-      top: 20px;
+      top: auto;
+      bottom: 20px;
+      left: 20px;
+      right: auto;
+    }
+
+    .custom-zoom {
+      display: none;
+    }
+
+    #themeToggle {
+      bottom: 130px; /* placed above geolocation */
       right: 20px;
-      background: #dc3545;
-      color: white;
-      padding: 6px 12px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      z-index: 1001;
     }
-
-    body.dark-mode #coordBox {
-      background: #333;
-      color: #fff;
-    }
-
-    @media (max-width: 768px) {
-      #sidebar {
-        display: none;
-      }
-
-      #coordBox {
-        top: 80px; /* farther down from burger icon */
-        left: 50%;
-        transform: translateX(-50%);
-        width: calc(100% - 40px);
-        flex-direction: column;
-        align-items: stretch;
-        padding: 12px;
-        gap: 8px;
-        display: none;
-      }
-
-      #coordBox.show {
-        display: flex;
-      }
-
-      #coordBox select, #coordBox input, #coordBox button {
-        width: 100%;
-        font-size: 15px;
-      }
-
-      #burgerIcon {
-        display: block;
-      }
-
-      #logoutBtn {
-        top: auto;
-        bottom: 20px;
-        left: 20px;
-        right: auto;
-      }
-
-      .custom-zoom {
-        display: none;
-      }
-
-      #themeToggle {
-        bottom: 130px; /* placed above geolocation */
-        right: 20px;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
 
