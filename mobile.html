@@ -22,6 +22,20 @@
       position: relative;
     }
 
+    #mobileBurger {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 1100;
+      background: white;
+      border: none;
+      font-size: 22px;
+      padding: 6px 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 4px rgba(0,0,0,0.2);
+      display: block;
+    }
+
     #coordBox {
       position: absolute;
       top: 70px;
@@ -42,25 +56,11 @@
     #coordBox select,
     #coordBox input,
     #coordBox button {
-      padding: 6px 8px;
+      padding: 10px;
       font-size: 14px;
       border: 1px solid #ccc;
       border-radius: 5px;
-      width: 70%;
-    }
-
-    #mobileBurger {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      z-index: 1100;
-      background: white;
-      border: none;
-      font-size: 22px;
-      padding: 6px 10px;
-      border-radius: 5px;
-      box-shadow: 0 0 4px rgba(0,0,0,0.2);
-      display: block;
+      width: 100%;
     }
 
     #coordBox.mobile-hidden {
@@ -81,19 +81,6 @@
       cursor: pointer;
       box-shadow: 0 1px 4px rgba(0,0,0,0.3);
       font-size: 16px;
-      z-index: 1001;
-    }
-
-    #logoutBtn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: #dc3545;
-      color: white;
-      padding: 6px 12px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
       z-index: 1001;
     }
 
@@ -131,15 +118,15 @@
   </div>
 
   <div id="themeToggle">🌓</div>
-  <button id="logoutBtn" onclick="logout()">Logout</button>
 </div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
 <script src="z_data88.js"></script>
+
 <script>
 let csvData = [];
-let map = L.map('map', { zoomControl: true, attributionControl: false }).setView([14.6188, 121.0829], 16);
+let map = L.map('map', { zoomControl: false, attributionControl: false }).setView([14.6188, 121.0829], 16);
 let markers = [];
 let userMarker;
 
@@ -265,11 +252,6 @@ document.getElementById("themeToggle").addEventListener("click", () => {
 document.getElementById("mobileBurger").addEventListener("click", () => {
   document.getElementById("coordBox").classList.toggle("mobile-hidden");
 });
-
-function logout() {
-  localStorage.removeItem("loggedIn");
-  window.location.href = "login.html";
-}
 </script>
 </body>
 </html>
