@@ -97,12 +97,18 @@ fetch("https://samplemap.t-furrteen.workers.dev/api/mapdata", {
   return res.json();
 })
 .then(data => {
-  csvData = parseCSVFromBase64(data.encodedData);
-  findNearby();
+  try {
+    csvData = parseCSVFromBase64(data.encodedData);
+    console.log("Parsed CSV Data:", csvData);
+    findNearby();
+  } catch (parseErr) {
+    console.error("Failed to parse base64 or CSV:", parseErr);
+    alert("Data received but failed to process.");
+  }
 })
 .catch(err => {
-  console.error("Error loading data:", err);
-  alert("Access denied or data fetch failed.");
+  console.error("Failed to fetch map data:", err);
+  alert("Access denied or fetch error.");
 });
 
 function parseCSVFromBase64(encoded) {
