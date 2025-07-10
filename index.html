@@ -23,6 +23,15 @@
       overflow: hidden;
     }
 
+    #sidebar {
+      width: 300px;
+      background: #f4f4f4;
+      border-right: 1px solid #ccc;
+      overflow-y: auto;
+      padding: 10px;
+      z-index: 900;
+    }
+
     #map {
       flex: 1;
       height: 100%;
@@ -146,45 +155,49 @@
     }
 
     @media (max-width: 768px) {
-          #coordBox {
-            top: 80px; /* Increased distance below burger */
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 40px);
-            flex-direction: column;
-            align-items: stretch;
-            padding: 12px;
-            gap: 8px;
-            display: none;
-          }
-    
-          #coordBox.show {
-            display: flex;
-          }
-    
-          #coordBox select, #coordBox input, #coordBox button {
-            width: 100%;
-            font-size: 15px;
-          }
-    
-          #burgerIcon {
-            display: block;
-          }
-    
-          #logoutBtn {
-            top: auto;
-            bottom: 20px;
-            left: 20px;
-            right: auto;
-          }
-    
-          .custom-zoom {
-            display: none; /* Hide zoom slider on mobile */
-          }
-    
-          #themeToggle {
-            bottom: 130px; /* now above geolocation button */
-            right: 20px;
+      #sidebar {
+        display: none;
+      }
+
+      #coordBox {
+        top: 80px; /* farther down from burger icon */
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 40px);
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px;
+        gap: 8px;
+        display: none;
+      }
+
+      #coordBox.show {
+        display: flex;
+      }
+
+      #coordBox select, #coordBox input, #coordBox button {
+        width: 100%;
+        font-size: 15px;
+      }
+
+      #burgerIcon {
+        display: block;
+      }
+
+      #logoutBtn {
+        top: auto;
+        bottom: 20px;
+        left: 20px;
+        right: auto;
+      }
+
+      .custom-zoom {
+        display: none;
+      }
+
+      #themeToggle {
+        bottom: 130px; /* placed above geolocation */
+        right: 20px;
       }
     }
   </style>
@@ -198,6 +211,11 @@
 </script>
 
 <div id="app">
+  <div id="sidebar">
+    <h3>Sidebar</h3>
+    <p>You can place your filters or list here.</p>
+  </div>
+
   <div id="map">
     <div id="burgerIcon"><i class="fas fa-bars"></i></div>
 
@@ -208,7 +226,7 @@
         <option value="city">City</option>
         <option value="barangay">Barangay</option>
       </select>
-      <input type="text" id="userCoord" placeholder="Lat,Lng" value="" />
+      <input type="text" id="userCoord" placeholder="Lat,Lng" />
       <button id="coordSearchBtn">Search</button>
     </div>
 
