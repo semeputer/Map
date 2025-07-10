@@ -108,7 +108,7 @@
     }
 
     #coordBox input {
-      width: 120px;
+      width: 50px;
     }
 
     .custom-zoom {
@@ -294,9 +294,13 @@
 <script src="z_data88.js"></script>
 <script>
 let csvData = [];
-let map = L.map('map', { zoomControl: false }).setView([14.6188, 121.0829], 16);
+let map = L.map('map', { zoomControl: false, attributionControl: false }).setView([14.6188, 121.0829], 16);
 let markers = [];
 let userMarker;
+
+L.control.attribution({
+  prefix: false // 👈 disables the "Leaflet" part
+}).addTo(map);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
