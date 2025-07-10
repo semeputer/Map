@@ -31,19 +31,31 @@
   <button onclick="login()">Login</button>
 
   <script>
+    // Clear any existing login
+    localStorage.removeItem("loggedIn");
+
     function login() {
       const u = document.getElementById("user").value;
       const p = document.getElementById("pass").value;
 
+      // Dummy credentials (you can replace this with real logic)
       if (u === "admin" && p === "1234") {
         localStorage.setItem("loggedIn", "true");
-        window.location.href = "index.html";
+
+        // Detect mobile or desktop
+        const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth <= 768;
+
+        // Redirect accordingly
+        if (isMobile) {
+          window.location.href = "mobile.html";
+        } else {
+          window.location.href = "desktop.html";
+        }
+
       } else {
         alert("Invalid credentials");
       }
     }
-
-    localStorage.removeItem("loggedIn");
   </script>
 </body>
 </html>
