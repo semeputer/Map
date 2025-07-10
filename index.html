@@ -214,23 +214,26 @@
       #sidebar {
         display: none;
       }
-
+    
       #coordBox {
+        top: 70px; /* ✅ push below burger icon */
         flex-direction: column;
         align-items: stretch;
-        width: calc(100% - 40px); /* max width with margin */
+        width: calc(100% - 40px); /* full width with side margins */
         left: 20px;
         right: 20px;
       }
-
-      #coordBox select, #coordBox input, #coordBox button {
+    
+      #coordBox select,
+      #coordBox input,
+      #coordBox button {
         width: 100%;
       }
-
+    
       #mobileBurger {
         display: block;
       }
-
+    
       .custom-zoom,
       #logoutBtn {
         display: none !important;
