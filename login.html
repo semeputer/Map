@@ -9,18 +9,28 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 100px;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #f7f7f7;
+    }
+
+    h2 {
+      margin-bottom: 20px;
     }
 
     input {
       padding: 8px;
       margin: 6px 0;
-      width: 200px;
+      width: 220px;
+      font-size: 16px;
     }
 
     button {
       padding: 8px 16px;
-      margin-top: 10px;
+      margin-top: 12px;
+      font-size: 16px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -31,27 +41,18 @@
   <button onclick="login()">Login</button>
 
   <script>
-    // Clear any existing login
+    // Always reset session when visiting or refreshing login page
     localStorage.removeItem("loggedIn");
 
     function login() {
-      const u = document.getElementById("user").value;
-      const p = document.getElementById("pass").value;
+      const u = document.getElementById("user").value.trim();
+      const p = document.getElementById("pass").value.trim();
 
-      // Dummy credentials (you can replace this with real logic)
       if (u === "admin" && p === "1234") {
         localStorage.setItem("loggedIn", "true");
 
-        // Detect mobile or desktop
         const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth <= 768;
-
-        // Redirect accordingly
-        if (isMobile) {
-          window.location.href = "mobile.html";
-        } else {
-          window.location.href = "index.html";
-        }
-
+        window.location.href = isMobile ? "mobile.html" : "desktop.html";
       } else {
         alert("Invalid credentials");
       }
