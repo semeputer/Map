@@ -19,6 +19,7 @@
 
     #app {
       display: flex;
+      flex-direction: row;
       height: 100%;
       overflow: hidden;
     }
@@ -192,14 +193,53 @@
       color: #fff;
     }
 
+    /* MOBILE RESPONSIVE STYLES */
     @media (max-width: 768px) {
+      #app {
+        flex-direction: column;
+      }
+
+      #sidebar {
+        display: none;
+      }
+
       #coordBox {
         flex-direction: column;
         align-items: stretch;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        width: calc(100% - 20px);
+        gap: 8px;
       }
 
-      #coordBox select, #coordBox input {
+      #coordBox select,
+      #coordBox input,
+      #coordBox button {
         width: 100%;
+        font-size: 14px;
+      }
+
+      #logoutBtn {
+        top: auto;
+        bottom: 20px;
+        right: 13px;
+        padding: 5px 8px;
+        font-size: 13px;
+      }
+
+      #themeToggle {
+        bottom: 66px;
+        right: 13px;
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+      }
+
+      .custom-zoom {
+        left: auto;
+        right: 13px;
+        bottom: 110px;
       }
     }
   </style>
@@ -238,7 +278,7 @@
         <option value="barangay">Barangay</option>
       </select>
       <input type="text" id="userCoord" placeholder="Lat,Lng" value="" />
-      <button id="coordSearchBtn" style="padding:6px 10px;border-radius:5px;border:1px solid #ccc;background:#f0f0f0;cursor:pointer;">Search</button>
+      <button id="coordSearchBtn">Search</button>
     </div>
     <div class="custom-zoom">
       <input type="range" id="zoomSlider" min="1" max="20" step="1" />
@@ -398,6 +438,11 @@ document.getElementById("themeToggle").addEventListener("click", () => {
 function logout() {
   localStorage.removeItem("loggedIn");
   window.location.href = "login.html";
+}
+
+// Auto-collapse sidebar on mobile
+if (window.innerWidth <= 768) {
+  document.getElementById("sidebar").classList.add("collapsed");
 }
 </script>
 </body>
