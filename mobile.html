@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Nearby Coordinates Map</title>
 
+  <!-- 🔐 Login check FIRST -->
+  <script>
+    if (localStorage.getItem("loggedIn") !== "true") {
+      window.location.href = "login.html";
+    }
+  </script>
+
   <!-- Leaflet & Icons -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -104,12 +111,6 @@
   </style>
 </head>
 <body>
-
-<script>
-  if (localStorage.getItem("loggedIn") !== "true") {
-    window.location.href = "login.html";
-  }
-</script>
 
 <div id="map">
   <button id="mobileBurger"><i class="fas fa-bars"></i></button>
