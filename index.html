@@ -31,12 +31,11 @@
 
     #coordBox {
       position: absolute;
-      top: 70px; /* a bit lower to not overlap the burger icon */
-      left: 50%;
-      transform: translateX(-50%);
+      top: 20px;
+      left: 20px;
       z-index: 1000;
       background: white;
-      padding: 12px;
+      padding: 10px;
       border-radius: 8px;
       box-shadow: 0 0 8px rgba(0,0,0,0.1);
       display: flex;
@@ -113,7 +112,7 @@
 
     #themeToggle {
       position: absolute;
-      bottom: 110px;
+      bottom: 66px;
       right: 13px;
       background: #fff;
       width: 34px;
@@ -147,41 +146,45 @@
     }
 
     @media (max-width: 768px) {
-      #coordBox {
-        flex-direction: column;
-        align-items: stretch;
-        width: calc(100% - 40px);
-        gap: 8px;
-        display: none;
-      }
-
-      #coordBox.show {
-        display: flex;
-      }
-
-      #coordBox select, #coordBox input, #coordBox button {
-        width: 100%;
-        font-size: 15px;
-      }
-
-      #burgerIcon {
-        display: block;
-      }
-
-      #logoutBtn {
-        top: auto;
-        bottom: 20px;
-        left: 20px;
-        right: auto;
-      }
-
-      .custom-zoom {
-        display: none;
-      }
-
-      #themeToggle {
-        bottom: 100px; /* above geolocation */
-        right: 20px;
+          #coordBox {
+            top: 80px; /* Increased distance below burger */
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            flex-direction: column;
+            align-items: stretch;
+            padding: 12px;
+            gap: 8px;
+            display: none;
+          }
+    
+          #coordBox.show {
+            display: flex;
+          }
+    
+          #coordBox select, #coordBox input, #coordBox button {
+            width: 100%;
+            font-size: 15px;
+          }
+    
+          #burgerIcon {
+            display: block;
+          }
+    
+          #logoutBtn {
+            top: auto;
+            bottom: 20px;
+            left: 20px;
+            right: auto;
+          }
+    
+          .custom-zoom {
+            display: none; /* Hide zoom slider on mobile */
+          }
+    
+          #themeToggle {
+            bottom: 130px; /* now above geolocation button */
+            right: 20px;
       }
     }
   </style>
