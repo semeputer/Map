@@ -251,7 +251,28 @@
 <!-- Scripts -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
-<script src="z_data88.js"></script>
+<script>
+    const AUTH_TOKEN = "your-secret-token"; // must match what's in your Worker
+    
+    // Fetch encoded data securely from Cloudflare Worker
+    fetch("https://samplemap.t-furrteen.workers.dev/api/mapdata", {
+      headers: {
+        Authorization: `Bearer ${AUTH_TOKEN}`
+      }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Unauthorized or data fetch error.");
+      return res.json();
+    })
+    .then(data => {
+      csvData = parseCSVFromBase64(data.encodedData);
+      findNearby();
+    })
+    .catch(err => {
+      console.error("Error loading data:", err);
+      alert("Unable to load map data. Check access or token.");
+    });
+</script>
 <script>
 let csvData = [];
 let map = L.map('map', { zoomControl: false }).setView([14.6188, 121.0829], 16);
