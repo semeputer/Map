@@ -2,205 +2,231 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Nearby Coordinates Map</title>
 
   <!-- Leaflet & Icons -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css"/>
 
   <style>
-  html, body {
-    margin: 0;
-    height: 100%;
-    font-family: 'Segoe UI', sans-serif;
-  }
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+    }
 
-  #app {
-    display: flex;
-    height: 100%;
-    overflow: hidden;
-  }
+    #app {
+      display: flex;
+      height: 100%;
+      overflow: hidden;
+    }
 
-  #sidebar {
-    width: 300px;
-    background: #f4f4f4;
-    border-right: 1px solid #ccc;
-    overflow-y: auto;
-    padding: 10px;
-    z-index: 900;
-  }
-
-  #map {
-    flex: 1;
-    height: 100%;
-    position: relative;
-  }
-
-  #coordBox {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 1000;
-    background: white;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #000;
-  }
-
-  #coordBox select, #coordBox input {
-    padding: 6px 8px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-
-  #coordBox select {
-    width: 120px;
-  }
-
-  #coordBox input {
-    width: 160px;
-  }
-
-  #coordBox button {
-    padding: 6px 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background: #f0f0f0;
-    cursor: pointer;
-  }
-
-  #burgerIcon {
-    position: absolute;
-    top: 15px;
-    left: 20px;
-    font-size: 22px;
-    background: white;
-    padding: 6px 10px;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    cursor: pointer;
-    z-index: 1001;
-    display: none;
-  }
-
-  .custom-zoom {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    z-index: 1000;
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(4px);
-    padding: 6px;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    transition: opacity 0.3s ease;
-    opacity: 0.4;
-  }
-
-  .custom-zoom:hover {
-    opacity: 1;
-  }
-
-  .custom-zoom input[type=range] {
-    writing-mode: bt-lr;
-    -webkit-appearance: slider-vertical;
-    width: 30px;
-    height: 120px;
-    cursor: pointer;
-  }
-
-  #themeToggle {
-    position: absolute;
-    bottom: 66px;
-    right: 13px;
-    background: #fff;
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-    font-size: 16px;
-    z-index: 1001;
-  }
-
-  #logoutBtn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: #dc3545;
-    color: white;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    z-index: 1001;
-  }
-
-  body.dark-mode #coordBox {
-    background: #333;
-    color: #fff;
-  }
-
-  @media (max-width: 768px) {
     #sidebar {
+      width: 280px;
+      background: #fff;
+      border-right: 1px solid #ddd;
+      padding: 20px;
+      box-sizing: border-box;
+      transition: width 0.3s ease;
+      position: relative;
+      color: #000;
+    }
+
+    #sidebar.collapsed {
+      width: 60px;
+      padding: 20px 10px;
+    }
+
+    #sidebar.collapsed .sidebar-content {
       display: none;
+    }
+
+    #toggleBtn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      color: #000;
+    }
+
+    .filter-group {
+      margin-top: 30px;
+    }
+
+    .util-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .util-options.hidden {
+      display: none;
+    }
+
+    .filter-group label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    #map {
+      flex: 1;
+      height: 100%;
+      position: relative;
     }
 
     #coordBox {
-      top: 80px; /* farther down from burger icon */
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 40px);
-      flex-direction: column;
-      align-items: stretch;
-      padding: 12px;
-      gap: 8px;
-      display: none;
-    }
-
-    #coordBox.show {
-      display: flex;
-    }
-
-    #coordBox select, #coordBox input, #coordBox button {
-      width: 100%;
-      font-size: 15px;
-    }
-
-    #burgerIcon {
-      display: block;
-    }
-
-    #logoutBtn {
-      top: auto;
-      bottom: 20px;
+      position: absolute;
+      top: 20px;
       left: 20px;
-      right: auto;
+      z-index: 1000;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #000;
+    }
+
+    #coordBox select, #coordBox input {
+      padding: 6px 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #coordBox select {
+      width: 120px;
+    }
+
+    #coordBox input {
+      width: 160px;
     }
 
     .custom-zoom {
-      display: none;
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(4px);
+      padding: 6px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.3s ease;
+      opacity: 0.4;
+    }
+
+    .custom-zoom:hover {
+      opacity: 1;
+    }
+
+    .custom-zoom input[type=range] {
+      writing-mode: bt-lr;
+      -webkit-appearance: slider-vertical;
+      width: 30px;
+      height: 120px;
+      cursor: pointer;
+    }
+
+    .leaflet-control-locate {
+      width: 34px !important;
+      height: 34px !important;
+      border-radius: 4px !important;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
+      margin-top: 8px !important;
     }
 
     #themeToggle {
-      bottom: 130px; /* placed above geolocation */
-      right: 20px;
+      position: absolute;
+      bottom: 66px;
+      right: 13px;
+      background: #fff;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      font-size: 16px;
+      z-index: 1001;
     }
-  }
-</style>
+
+    #logoutBtn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #dc3545;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    #mobileBurger {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 1100;
+      background: white;
+      border: none;
+      font-size: 22px;
+      padding: 6px 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 4px rgba(0,0,0,0.2);
+      display: none;
+    }
+
+    #coordBox.mobile-hidden {
+      display: none !important;
+    }
+
+    body.dark-mode #sidebar {
+      background: #1e1e1e;
+      color: #fff;
+    }
+
+    body.dark-mode #coordBox {
+      background: #333;
+      color: #fff;
+    }
+
+    body.dark-mode #toggleBtn {
+      color: #fff;
+    }
+
+    @media (max-width: 768px) {
+      #coordBox {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      #coordBox select, #coordBox input {
+        width: 100%;
+      }
+      #mobileBurger {
+        display: block;
+      }
+      .custom-zoom,
+      #logoutBtn {
+        display: none !important;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -211,13 +237,24 @@
 </script>
 
 <div id="app">
-  <div id="sidebar">
-    <h3>Sidebar</h3>
-    <p>You can place your filters or list here.</p>
+  <div id="sidebar" class="collapsed">
+    <button id="toggleBtn"><i class="fas fa-bars"></i></button>
+    <div class="sidebar-content">
+      <div class="filter-group">
+        <div class="util-toggle" onclick="toggleUtil()">
+          <span><i id="utilArrow" class="fas fa-chevron-down"></i> Utilization</span>
+        </div>
+        <div class="util-options" id="utilOptions">
+          <label><input type="checkbox" class="utilFilter" value="low" checked> 0–50% (Green)</label>
+          <label><input type="checkbox" class="utilFilter" value="mid" checked> 51–74% (Yellow)</label>
+          <label><input type="checkbox" class="utilFilter" value="high" checked> 75–100% (Red)</label>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div id="map">
-    <div id="burgerIcon"><i class="fas fa-bars"></i></div>
+    <button id="mobileBurger"><i class="fas fa-bars"></i></button>
 
     <div id="coordBox">
       <select id="coordType">
@@ -226,8 +263,8 @@
         <option value="city">City</option>
         <option value="barangay">Barangay</option>
       </select>
-      <input type="text" id="userCoord" placeholder="Lat,Lng" />
-      <button id="coordSearchBtn">Search</button>
+      <input type="text" id="userCoord" placeholder="Lat,Lng" value="" />
+      <button id="coordSearchBtn" style="padding:6px 10px;border-radius:5px;border:1px solid #ccc;background:#f0f0f0;cursor:pointer;">Search</button>
     </div>
 
     <div class="custom-zoom">
@@ -252,6 +289,11 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
+const zoomSlider = document.getElementById('zoomSlider');
+zoomSlider.value = map.getZoom();
+zoomSlider.addEventListener('input', () => map.setZoom(parseInt(zoomSlider.value)));
+map.on('zoomend', () => zoomSlider.value = map.getZoom());
+
 L.control.locate({
   position: 'bottomright',
   setView: true,
@@ -263,11 +305,6 @@ L.control.locate({
   strings: { title: "Show my location" },
   locateOptions: { enableHighAccuracy: true }
 }).addTo(map);
-
-const zoomSlider = document.getElementById('zoomSlider');
-zoomSlider.value = map.getZoom();
-zoomSlider.addEventListener('input', () => map.setZoom(parseInt(zoomSlider.value)));
-map.on('zoomend', () => zoomSlider.value = map.getZoom());
 
 function parseCSVFromBase64(encoded) {
   const decoded = atob(encoded);
@@ -288,6 +325,27 @@ function parseCSVFromBase64(encoded) {
 
 csvData = parseCSVFromBase64(encodedData);
 findNearby();
+
+function toggleUtil() {
+  document.getElementById("utilOptions").classList.toggle("hidden");
+  document.getElementById("utilArrow").classList.toggle("fa-chevron-down");
+  document.getElementById("utilArrow").classList.toggle("fa-chevron-up");
+}
+
+document.getElementById("toggleBtn").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.toggle("collapsed");
+});
+
+document.querySelectorAll('.utilFilter').forEach(cb => {
+  cb.addEventListener('change', findNearby);
+});
+
+document.getElementById("coordSearchBtn").addEventListener("click", () => {
+  const coordType = document.getElementById("coordType").value;
+  if (coordType === "coordinates") {
+    findNearby();
+  }
+});
 
 function haversine(lat1, lon1, lat2, lon2) {
   const R = 6371;
@@ -319,6 +377,8 @@ function findNearby() {
   const userLng = parseFloat(parts[1]);
   if (isNaN(userLat) || isNaN(userLng)) return;
 
+  const selected = Array.from(document.querySelectorAll('.utilFilter:checked')).map(cb => cb.value);
+
   markers.forEach(m => map.removeLayer(m));
   markers = [];
   if (userMarker) map.removeLayer(userMarker);
@@ -336,7 +396,7 @@ function findNearby() {
     if (isNaN(point.lat) || isNaN(point.lng) || isNaN(point.utilization)) return;
     const dist = haversine(userLat, userLng, point.lat, point.lng);
     const category = getUtilCategory(point.utilization);
-    if (dist <= 0.5 && ['low', 'mid', 'high'].includes(category)) {
+    if (dist <= 0.5 && selected.includes(category)) {
       const color = getColor(point.utilization);
       const popupHtml = `
         <strong>${point.Node || 'Unknown'}</strong><br>
@@ -359,20 +419,17 @@ function findNearby() {
   });
 }
 
-document.getElementById("coordSearchBtn").addEventListener("click", () => {
-  const coordType = document.getElementById("coordType").value;
-  if (coordType === "coordinates") {
-    findNearby();
-  }
-});
-
-document.getElementById("burgerIcon").addEventListener("click", () => {
-  document.getElementById("coordBox").classList.toggle("show");
-});
-
 document.getElementById("themeToggle").addEventListener("click", () => {
   document.body.classList.toggle("dark-mode");
 });
+
+document.getElementById("mobileBurger").addEventListener("click", () => {
+  document.getElementById("coordBox").classList.toggle("mobile-hidden");
+});
+
+if (window.innerWidth <= 768) {
+  document.getElementById("coordBox").classList.add("mobile-hidden");
+}
 
 function logout() {
   localStorage.removeItem("loggedIn");
