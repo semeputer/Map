@@ -237,8 +237,8 @@
         <option value="city">City</option>
         <option value="barangay">Barangay</option>
       </select>
-      <input type="text" id="userCoord" placeholder="Lat,Lng or City name" />
-      <button id="coordSearchBtn">Search</button>
+      <input type="text" id="userCoord" placeholder="Lat,Lng" value="" />
+      <button id="coordSearchBtn" style="padding:6px 10px;border-radius:5px;border:1px solid #ccc;background:#f0f0f0;cursor:pointer;">Search</button>
     </div>
     <div class="custom-zoom">
       <input type="range" id="zoomSlider" min="1" max="20" step="1" />
@@ -256,8 +256,6 @@ let csvData = [];
 let map = L.map('map', { zoomControl: false }).setView([14.6188, 121.0829], 16);
 let markers = [];
 let userMarker;
-let cityLayer;
-let cityGeoJSON;
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
@@ -279,14 +277,6 @@ L.control.locate({
   strings: { title: "Show my location" },
   locateOptions: { enableHighAccuracy: true }
 }).addTo(map);
-
-// Load city GeoJSON from GitHub
-fetch("https://raw.githubusercontent.com/semeputer/Map/main/ph_cities.geojson")
-  .then(res => res.json())
-  .then(geojson => {
-    cityGeoJSON = geojson;
-  })
-  .catch(err => console.error("Failed to load city boundaries:", err));
 
 function parseCSVFromBase64(encoded) {
   const decoded = atob(encoded);
@@ -324,40 +314,8 @@ document.querySelectorAll('.utilFilter').forEach(cb => {
 
 document.getElementById("coordSearchBtn").addEventListener("click", () => {
   const coordType = document.getElementById("coordType").value;
-  const input = document.getElementById("userCoord").value.trim().toLowerCase();
-
   if (coordType === "coordinates") {
     findNearby();
-    return;
-  }
-
-  if (coordType === "city") {
-    if (!cityGeoJSON) {
-      alert("City data not loaded.");
-      return;
-    }
-
-    if (cityLayer) map.removeLayer(cityLayer);
-
-    const match = cityGeoJSON.features.find(f =>
-      f.properties.name.toLowerCase() === input
-    );
-
-    if (!match) {
-      alert("City not found.");
-      return;
-    }
-
-    cityLayer = L.geoJSON(match, {
-      style: {
-        color: "blue",
-        weight: 2,
-        fillColor: "#007bff",
-        fillOpacity: 0.3
-      }
-    }).addTo(map);
-
-    map.fitBounds(cityLayer.getBounds());
   }
 });
 
