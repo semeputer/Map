@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Nearby Coordinates Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -191,11 +190,13 @@
   </style>
 </head>
 <body>
+
 <script>
   if (localStorage.getItem("loggedIn") !== "true") {
     window.location.href = "login.html";
   }
 </script>
+
 <div id="app">
   <div id="sidebar" class="collapsed">
     <button id="toggleBtn"><i class="fas fa-bars"></i></button>
@@ -229,7 +230,7 @@
       <input type="range" id="zoomSlider" min="1" max="20" step="1" />
     </div>
 
-    <div id="themeToggle">🌃</div>
+    <div id="themeToggle">🌓</div>
     <button id="logoutBtn" onclick="logout()">Logout</button>
   </div>
 </div>
@@ -238,7 +239,136 @@
 <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
 <script src="z_data88.js"></script>
 <script>
-  // All your map logic here (unchanged)
+// JS remains mostly the same; mobileBurger references removed
+let csvData = [];
+let map = L.map('map', { zoomControl: false, attributionControl: false }).setView([14.6188, 121.0829], 16);
+let markers = [];
+let userMarker;
+
+L.control.attribution({ prefix: false }).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+const zoomSlider = document.getElementById('zoomSlider');
+zoomSlider.value = map.getZoom();
+zoomSlider.addEventListener('input', () => map.setZoom(parseInt(zoomSlider.value)));
+map.on('zoomend', () => zoomSlider.value = map.getZoom());
+
+L.control.locate({
+  position: 'bottomright',
+  setView: true,
+  flyTo: true,
+  keepCurrentZoomLevel: true,
+  drawCircle: true,
+  showPopup: false,
+  icon: 'fa fa-crosshairs',
+  strings: { title: "Show my location" },
+  locateOptions: { enableHighAccuracy: true }
+}).addTo(map);
+
+csvData = parseCSVFromBase64(encodedData);
+findNearby();
+
+function toggleUtil() {
+  document.getElementById("utilOptions").classList.toggle("hidden");
+  document.getElementById("utilArrow").classList.toggle("fa-chevron-down");
+  document.getElementById("utilArrow").classList.toggle("fa-chevron-up");
+}
+
+document.getElementById("toggleBtn").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.toggle("collapsed");
+});
+
+document.querySelectorAll('.utilFilter').forEach(cb => {
+  cb.addEventListener('change', findNearby);
+});
+
+document.getElementById("coordSearchBtn").addEventListener("click", () => {
+  const coordType = document.getElementById("coordType").value;
+  if (coordType === "coordinates") {
+    findNearby();
+  }
+});
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const toRad = x => x * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function getUtilCategory(util) {
+  if (util <= 50) return 'low';
+  if (util <= 74) return 'mid';
+  return 'high';
+}
+
+function getColor(util) {
+  if (util <= 50) return 'green';
+  if (util <= 74) return 'yellow';
+  return 'red';
+}
+
+function findNearby() {
+  const input = document.getElementById("userCoord").value.trim();
+  const parts = input.split(",");
+  if (parts.length !== 2) return;
+
+  const userLat = parseFloat(parts[0]);
+  const userLng = parseFloat(parts[1]);
+  if (isNaN(userLat) || isNaN(userLng)) return;
+
+  const selected = Array.from(document.querySelectorAll('.utilFilter:checked')).map(cb => cb.value);
+
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+  if (userMarker) map.removeLayer(userMarker);
+
+  userMarker = L.marker([userLat, userLng], { draggable: true }).addTo(map).bindPopup("You are here").openPopup();
+  userMarker.on("dragend", () => {
+    const { lat, lng } = userMarker.getLatLng();
+    document.getElementById("userCoord").value = `${lat.toFixed(5)},${lng.toFixed(5)}`;
+    findNearby();
+  });
+
+  map.setView([userLat, userLng], 18);
+
+  csvData.forEach(point => {
+    if (isNaN(point.lat) || isNaN(point.lng) || isNaN(point.utilization)) return;
+    const dist = haversine(userLat, userLng, point.lat, point.lng);
+    const category = getUtilCategory(point.utilization);
+    if (dist <= 0.5 && selected.includes(category)) {
+      const color = getColor(point.utilization);
+      const popupHtml = `
+        <strong>${point.Node || 'Unknown'}</strong><br>
+        City: ${point.City || '—'}<br>
+        Equipped: ${point.Equipped || '—'}<br>
+        Working: ${point.Working || '—'}<br>
+        Available: ${point.Available || '—'}<br>
+        Utilization: ${point.utilization.toFixed(0)}%<br>
+        ${dist.toFixed(3)} km<br>
+        <a href="https://www.google.com/maps/dir/${userLat},${userLng}/${point.lat},${point.lng}" target="_blank">Get Directions</a>
+      `;
+      const marker = L.circleMarker([point.lat, point.lng], {
+        radius: 6,
+        color: color,
+        fillColor: color,
+        fillOpacity: 0.85
+      }).addTo(map).bindPopup(popupHtml);
+      markers.push(marker);
+    }
+  });
+}
+
+document.getElementById("themeToggle").addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+});
+
+function logout() {
+  localStorage.removeItem("loggedIn");
+  window.location.href = "login.html";
+}
 </script>
 </body>
 </html>
