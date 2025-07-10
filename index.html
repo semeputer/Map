@@ -211,16 +211,26 @@
     }
 
     @media (max-width: 768px) {
+      #sidebar {
+        display: none;
+      }
+
       #coordBox {
         flex-direction: column;
         align-items: stretch;
+        width: calc(100% - 40px); /* max width with margin */
+        left: 20px;
+        right: 20px;
       }
-      #coordBox select, #coordBox input {
+
+      #coordBox select, #coordBox input, #coordBox button {
         width: 100%;
       }
+
       #mobileBurger {
         display: block;
       }
+
       .custom-zoom,
       #logoutBtn {
         display: none !important;
