@@ -195,33 +195,14 @@
     body.dark-mode #toggleBtn {
       color: #fff;
     }
-    /* Sidebar header to hold the burger button visibly */
-#sidebar .sidebar-header {
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 10px;
-}
-
-#sidebar.collapsed .sidebar-header {
-  justify-content: center;
-}
-
-/* Optional: smooth hide/show */
-#sidebar {
-  overflow: hidden;
-}
   </style>
 </head>
 <body>
 
 <div id="app">
   <div id="sidebar" class="collapsed">
-  <div class="sidebar-header">
     <button id="toggleBtn"><i class="fas fa-bars"></i></button>
-  </div>
-  <div class="sidebar-content">
+    <div class="sidebar-content">
       <div class="filter-group">
         <div class="util-toggle" onclick="toggleUtil()">
           <span><i id="utilArrow" class="fas fa-chevron-down"></i> Utilization</span>
