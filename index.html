@@ -49,8 +49,16 @@ INDEX HTML
       display: block;
     }
     
+    .sidebar-content {
+      transition: opacity 0.3s ease;
+      display: block; /* Always takes up space */
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
     #sidebar.collapsed .sidebar-content {
-      display: none;
+      opacity: 0;
+      pointer-events: none;
     }
 
     #toggleBtn {
