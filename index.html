@@ -1,12 +1,10 @@
-INDEX HTML
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Coordinates Locator</title>
 
-  <!-- 🔐 Login check FIRST -->
+  <!-- 🔐 Login check -->
   <script>
     if (localStorage.getItem("loggedIn") !== "true") {
       window.location.href = "login.html";
@@ -16,6 +14,7 @@ INDEX HTML
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css"/>
+
   <style>
     html, body {
       margin: 0;
@@ -35,9 +34,10 @@ INDEX HTML
       border-right: 1px solid #ddd;
       padding: 20px;
       box-sizing: border-box;
-      transition: width 0.3s ease;
       position: relative;
       color: #000;
+      transition: width 0.3s ease;
+      overflow: hidden;
     }
 
     #sidebar.collapsed {
@@ -45,20 +45,12 @@ INDEX HTML
       padding: 20px 10px;
     }
 
+    #sidebar.collapsed .sidebar-content {
+      display: none;
+    }
+
     #sidebar:not(.collapsed) .sidebar-content {
       display: block;
-    }
-    
-    .sidebar-content {
-      transition: opacity 0.3s ease;
-      display: block; /* Always takes up space */
-      opacity: 1;
-      pointer-events: auto;
-    }
-    
-    #sidebar.collapsed .sidebar-content {
-      opacity: 0;
-      pointer-events: none;
     }
 
     #toggleBtn {
@@ -238,7 +230,7 @@ INDEX HTML
         <option value="city">City</option>
         <option value="barangay">Barangay</option>
       </select>
-      <input type="text" id="userCoord" placeholder="Lat,Lng" value="" />
+      <input type="text" id="userCoord" placeholder="Lat,Lng" />
       <button id="coordSearchBtn" style="padding:6px 10px;border-radius:5px;border:1px solid #ccc;background:#f0f0f0;cursor:pointer;">Search</button>
     </div>
 
@@ -254,8 +246,8 @@ INDEX HTML
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
 <script src="z_data88.js"></script>
+
 <script>
-// JS remains mostly the same; mobileBurger references removed
 let csvData = [];
 let map = L.map('map', { zoomControl: false, attributionControl: false }).setView([14.6188, 121.0829], 16);
 let markers = [];
