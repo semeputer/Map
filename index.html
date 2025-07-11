@@ -192,7 +192,11 @@
       color: #fff;
     }
     #sidebar .sidebar-content {
-      display: block;
+  display: block;
+    }
+    
+    #sidebar.collapsed .sidebar-content {
+      display: none;
     }
   </style>
 </head>
@@ -277,15 +281,7 @@ function toggleUtil() {
 
 document.getElementById("toggleBtn").addEventListener("click", () => {
   const sidebar = document.getElementById("sidebar");
-  const content = sidebar.querySelector('.sidebar-content');
   sidebar.classList.toggle("collapsed");
-
-  // Show or hide the content explicitly
-  if (sidebar.classList.contains("collapsed")) {
-    content.style.display = "none";
-  } else {
-    content.style.display = "block";
-  }
 });
 
 document.querySelectorAll('.utilFilter').forEach(cb => {
