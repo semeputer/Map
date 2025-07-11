@@ -145,7 +145,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-L.control.locate({
+const locateControl = L.control.locate({
   position: 'bottomright',
   setView: true,
   flyTo: true,
@@ -156,21 +156,19 @@ L.control.locate({
   strings: { title: "Show my location" },
   locateOptions: {
     enableHighAccuracy: true,
-    maximumAge: 10000, // use cached location if available
-    timeout: 10000,
+    maximumAge: 10000,
+    timeout: 10000
   },
-  onLocationFound: function(e) {
-    const lat = e.latitude.toFixed(5);
-    const lng = e.longitude.toFixed(5);
-    document.getElementById("userCoord").value = `${lat},${lng}`;
-    findNearby();
-  },
-  // ✅ This prevents continuous tracking:
-  watch: false,
-  cacheLocation: false,
-  setView: true,
-  flyTo: true
+  watch: false // ✅ ensures it only tracks once
 }).addTo(map);
+
+// ✅ Listen to map's locationfound event once
+map.on("locationfound", function(e) {
+  const lat = e.latitude.toFixed(5);
+  const lng = e.longitude.toFixed(5);
+  document.getElementById("userCoord").value = `${lat},${lng}`;
+  findNearby();
+});
 
 function parseCSVFromBase64(encoded) {
   const decoded = atob(encoded);
