@@ -36,13 +36,14 @@
       box-sizing: border-box;
       position: relative;
       color: #000;
-      transition: width 0.3s ease;
+      transition: width 0.3s ease, padding 0.3s ease;
       overflow: hidden;
     }
 
     #sidebar.collapsed {
       width: 60px;
-      padding: 20px 10px;
+      padding-left: 10px;
+      padding-right: 10px;
     }
 
     #sidebar.collapsed .sidebar-content {
@@ -62,6 +63,20 @@
       top: 15px;
       right: 15px;
       color: #000;
+      z-index: 10;
+    }
+
+    #sidebar.collapsed #toggleBtn {
+      left: 15px;
+      right: auto;
+    }
+
+    #toggleBtn i {
+      transition: transform 0.3s ease;
+    }
+
+    #sidebar.collapsed #toggleBtn i {
+      transform: rotate(180deg);
     }
 
     .filter-group {
@@ -283,7 +298,9 @@ function toggleUtil() {
 }
 
 document.getElementById("toggleBtn").addEventListener("click", () => {
-  document.getElementById("sidebar").classList.toggle("collapsed");
+  const sidebar = document.getElementById("sidebar");
+  const icon = document.querySelector("#toggleBtn i");
+  sidebar.classList.toggle("collapsed");
 });
 
 document.querySelectorAll('.utilFilter').forEach(cb => {
