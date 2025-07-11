@@ -1,5 +1,3 @@
-MOBILE HTML
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -151,13 +149,27 @@ L.control.locate({
   position: 'bottomright',
   setView: true,
   flyTo: true,
-  keepCurrentZoomLevel: true,
+  keepCurrentZoomLevel: false,
   drawCircle: true,
   showPopup: false,
   icon: 'fa fa-crosshairs',
   strings: { title: "Show my location" },
-  locateOptions: { enableHighAccuracy: true }
+  locateOptions: { enableHighAccuracy: true },
+  onLocationFound: function(e) {
+    const lat = e.latitude.toFixed(5);
+    const lng = e.longitude.toFixed(5);
+    document.getElementById("userCoord").value = `${lat},${lng}`;
+    findNearby();
+  }
 }).addTo(map);
+
+map.on('locationfound', function(e) {
+  const lat = e.latitude.toFixed(5);
+  const lng = e.longitude.toFixed(5);
+  document.getElementById("userCoord").value = `${lat},${lng}`;
+  findNearby();
+});
+map.locate({ setView: true, maxZoom: 18, enableHighAccuracy: true });
 
 function parseCSVFromBase64(encoded) {
   const decoded = atob(encoded);
