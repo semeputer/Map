@@ -50,8 +50,12 @@
       display: none;
     }
 
-    #sidebar:not(.collapsed) .sidebar-content {
+    #sidebar .sidebar-content {
       display: block;
+    }
+    
+    #sidebar.collapsed .sidebar-content {
+      display: none;
     }
 
     #toggleBtn {
