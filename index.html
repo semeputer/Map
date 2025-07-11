@@ -195,6 +195,9 @@
     body.dark-mode #toggleBtn {
       color: #fff;
     }
+    #sidebar .sidebar-content {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -277,7 +280,16 @@ function toggleUtil() {
 }
 
 document.getElementById("toggleBtn").addEventListener("click", () => {
-  document.getElementById("sidebar").classList.toggle("collapsed");
+  const sidebar = document.getElementById("sidebar");
+  const content = sidebar.querySelector('.sidebar-content');
+  sidebar.classList.toggle("collapsed");
+
+  // Show or hide the content explicitly
+  if (sidebar.classList.contains("collapsed")) {
+    content.style.display = "none";
+  } else {
+    content.style.display = "block";
+  }
 });
 
 document.querySelectorAll('.utilFilter').forEach(cb => {
