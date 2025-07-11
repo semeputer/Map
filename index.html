@@ -96,7 +96,7 @@
       color: #000;
     }
 
-    #coordBox select, #coordBox input {
+    #coordBox select, #coordBox input, #searchBtn {
       padding: 6px 8px;
       font-size: 14px;
       border: 1px solid #ccc;
@@ -178,6 +178,11 @@
       z-index: 1001;
     }
 
+    #searchBtn {
+      background: #f0f0f0;
+      cursor: pointer;
+    }
+
     body.dark-mode #sidebar {
       background: #1e1e1e;
       color: #fff;
@@ -192,13 +197,19 @@
       color: #fff;
     }
 
+    body.dark-mode #searchBtn {
+      background: #444;
+      color: #fff;
+      border: 1px solid #666;
+    }
+
     @media (max-width: 768px) {
       #coordBox {
         flex-direction: column;
         align-items: stretch;
       }
 
-      #coordBox select, #coordBox input {
+      #coordBox select, #coordBox input, #searchBtn {
         width: 100%;
       }
     }
@@ -206,7 +217,6 @@
 </head>
 <body>
 
-<!-- 🔐 Redirect if not logged in -->
 <script>
   if (localStorage.getItem("loggedIn") !== "true") {
     window.location.href = "login.html";
@@ -238,7 +248,8 @@
         <option value="city">City</option>
         <option value="barangay">Barangay</option>
       </select>
-      <input type="text" id="userCoord" placeholder="Lat,Lng" value="" oninput="findNearby()" />
+      <input type="text" id="userCoord" placeholder="Lat,Lng" value="" />
+      <button id="searchBtn">Search</button>
     </div>
     <div class="custom-zoom">
       <input type="range" id="zoomSlider" min="1" max="20" step="1" />
@@ -297,7 +308,6 @@ function parseCSVFromBase64(encoded) {
   });
 }
 
-// Initialize data
 csvData = parseCSVFromBase64(encodedData);
 findNearby();
 
@@ -314,6 +324,8 @@ document.getElementById("toggleBtn").addEventListener("click", () => {
 document.querySelectorAll('.utilFilter').forEach(cb => {
   cb.addEventListener('change', findNearby);
 });
+
+document.getElementById("searchBtn").addEventListener("click", findNearby);
 
 function haversine(lat1, lon1, lat2, lon2) {
   const R = 6371;
