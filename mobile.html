@@ -154,13 +154,22 @@ L.control.locate({
   showPopup: false,
   icon: 'fa fa-crosshairs',
   strings: { title: "Show my location" },
-  locateOptions: { enableHighAccuracy: true },
+  locateOptions: {
+    enableHighAccuracy: true,
+    maximumAge: 10000, // use cached location if available
+    timeout: 10000,
+  },
   onLocationFound: function(e) {
     const lat = e.latitude.toFixed(5);
     const lng = e.longitude.toFixed(5);
     document.getElementById("userCoord").value = `${lat},${lng}`;
     findNearby();
-  }
+  },
+  // ✅ This prevents continuous tracking:
+  watch: false,
+  cacheLocation: false,
+  setView: true,
+  flyTo: true
 }).addTo(map);
 
 function parseCSVFromBase64(encoded) {
