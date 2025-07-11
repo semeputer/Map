@@ -49,7 +49,7 @@
       const p = document.getElementById("pass").value.trim();
 
       if (u === "admin" && p === "1234") {
-        sessionStorage.setItem("loggedIn", "true");
+        localStorage.setItem("loggedIn", "true");
 
         const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth <= 768;
         window.location.href = isMobile ? "mobile.html" : "index.html";
