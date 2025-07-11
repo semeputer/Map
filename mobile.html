@@ -272,21 +272,23 @@ document.getElementById("themeToggle").addEventListener("click", () => {
 });
 
 // Auto-locate once on mobile
-if (window.innerWidth <= 768) {  // Mobile check (can be adjusted)
-  map.once("locationfound", function(e) {
-    const lat = e.latitude.toFixed(5);
-    const lng = e.longitude.toFixed(5);
-    document.getElementById("userCoord").value = `${lat},${lng}`;
-    findNearby();
-  });
+window.addEventListener("DOMContentLoaded", () => {
+  if (window.innerWidth <= 768) {
+    map.once("locationfound", function(e) {
+      const lat = e.latitude.toFixed(5);
+      const lng = e.longitude.toFixed(5);
+      document.getElementById("userCoord").value = `${lat},${lng}`;
+      findNearby();
+    });
 
-  map.locate({
-    setView: true,
-    enableHighAccuracy: true,
-    maxZoom: 18,
-    timeout: 10000
-  });
-}
+    map.locate({
+      setView: true,
+      enableHighAccuracy: true,
+      maxZoom: 18,
+      timeout: 10000
+    });
+  }
+});
 
 // Sidebar toggle
 document.getElementById("mobileBurger").addEventListener("click", () => {
