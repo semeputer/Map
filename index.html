@@ -7,7 +7,7 @@
 
   <!-- 🔐 Immediate Login Check BEFORE anything else -->
   <script>
-    if (locaStorage.getItem("loggedIn") !== "true") {
+    if (localStorage.getItem("loggedIn") !== "true") {
       window.location.href = "login.html";
     }
   </script>
