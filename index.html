@@ -2,15 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Coordinates Locator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nearby Coordinates Map</title>
 
-  <!-- 🔐 Login check -->
-  <script>
-    if (localStorage.getItem("loggedIn") !== "true") {
-      window.location.href = "login.html";
-    }
-  </script>
-
+  <!-- Leaflet & Icons -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css"/>
@@ -34,26 +29,16 @@
       border-right: 1px solid #ddd;
       padding: 20px;
       box-sizing: border-box;
+      transition: width 0.3s ease;
       position: relative;
       color: #000;
-      transition: width 0.3s ease, padding 0.3s ease;
-      overflow: hidden;
     }
 
     #sidebar.collapsed {
       width: 60px;
-      padding-left: 10px;
-      padding-right: 10px;
+      padding: 20px 10px;
     }
 
-    #sidebar.collapsed .sidebar-content {
-      display: none;
-    }
-
-    #sidebar .sidebar-content {
-      display: block;
-    }
-    
     #sidebar.collapsed .sidebar-content {
       display: none;
     }
@@ -67,20 +52,6 @@
       top: 15px;
       right: 15px;
       color: #000;
-      z-index: 10;
-    }
-
-    #sidebar.collapsed #toggleBtn {
-      left: 15px;
-      right: auto;
-    }
-
-    #toggleBtn i {
-      transition: transform 0.3s ease;
-    }
-
-    #sidebar.collapsed #toggleBtn i {
-      transform: rotate(180deg);
     }
 
     .filter-group {
@@ -137,7 +108,7 @@
     }
 
     #coordBox input {
-      width: 150px;
+      width: 160px;
     }
 
     .custom-zoom {
@@ -220,12 +191,30 @@
     body.dark-mode #toggleBtn {
       color: #fff;
     }
+
+    @media (max-width: 768px) {
+      #coordBox {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      #coordBox select, #coordBox input {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
 
+<!-- 🔐 Redirect if not logged in -->
+<script>
+  if (localStorage.getItem("loggedIn") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
+
 <div id="app">
-  <div id="sidebar">
+  <div id="sidebar" class="collapsed">
     <button id="toggleBtn"><i class="fas fa-bars"></i></button>
     <div class="sidebar-content">
       <div class="filter-group">
@@ -249,31 +238,29 @@
         <option value="city">City</option>
         <option value="barangay">Barangay</option>
       </select>
-      <input type="text" id="userCoord" placeholder="Lat,Lng" />
-      <button id="coordSearchBtn" style="padding:6px 10px;border-radius:5px;border:1px solid #ccc;background:#f0f0f0;cursor:pointer;">Search</button>
+      <input type="text" id="userCoord" placeholder="Lat,Lng" value="" oninput="findNearby()" />
     </div>
-
     <div class="custom-zoom">
       <input type="range" id="zoomSlider" min="1" max="20" step="1" />
     </div>
-
     <div id="themeToggle">🌓</div>
     <button id="logoutBtn" onclick="logout()">Logout</button>
   </div>
 </div>
 
+<!-- Scripts -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
 <script src="z_data88.js"></script>
-
 <script>
 let csvData = [];
-let map = L.map('map', { zoomControl: false, attributionControl: false }).setView([14.6188, 121.0829], 16);
+let map = L.map('map', { zoomControl: false }).setView([14.6188, 121.0829], 16);
 let markers = [];
 let userMarker;
 
-L.control.attribution({ prefix: false }).addTo(map);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
 
 const zoomSlider = document.getElementById('zoomSlider');
 zoomSlider.value = map.getZoom();
@@ -292,6 +279,25 @@ L.control.locate({
   locateOptions: { enableHighAccuracy: true }
 }).addTo(map);
 
+// Parse from Base64 CSV string
+function parseCSVFromBase64(encoded) {
+  const decoded = atob(encoded);
+  const lines = decoded.trim().split('\n');
+  const headers = lines[0].split(',');
+  return lines.slice(1).map(line => {
+    const values = line.split(',');
+    const obj = {};
+    headers.forEach((h, i) => obj[h.trim()] = values[i]?.trim());
+    return {
+      ...obj,
+      lat: parseFloat(obj.Latitude),
+      lng: parseFloat(obj.Longitude),
+      utilization: parseFloat(obj.Utilization)
+    };
+  });
+}
+
+// Initialize data
 csvData = parseCSVFromBase64(encodedData);
 findNearby();
 
@@ -302,20 +308,11 @@ function toggleUtil() {
 }
 
 document.getElementById("toggleBtn").addEventListener("click", () => {
-  const sidebar = document.getElementById("sidebar");
-  const icon = document.querySelector("#toggleBtn i");
-  sidebar.classList.toggle("collapsed");
+  document.getElementById("sidebar").classList.toggle("collapsed");
 });
 
 document.querySelectorAll('.utilFilter').forEach(cb => {
   cb.addEventListener('change', findNearby);
-});
-
-document.getElementById("coordSearchBtn").addEventListener("click", () => {
-  const coordType = document.getElementById("coordType").value;
-  if (coordType === "coordinates") {
-    findNearby();
-  }
 });
 
 function haversine(lat1, lon1, lat2, lon2) {
