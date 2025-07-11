@@ -163,7 +163,7 @@ const locateControl = L.control.locate({
 }).addTo(map);
 
 // ✅ Listen to map's locationfound event once
-map.on("locationfound", function(e) {
+map.once("locationfound", function(e) {
   const lat = e.latitude.toFixed(5);
   const lng = e.longitude.toFixed(5);
   document.getElementById("userCoord").value = `${lat},${lng}`;
