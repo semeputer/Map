@@ -159,16 +159,16 @@ const locateControl = L.control.locate({
     maximumAge: 10000,
     timeout: 10000
   },
-  watch: false // ✅ ensures it only tracks once
+  watch: false
 }).addTo(map);
 
-// ✅ Listen to map's locationfound event once
-map.once("locationfound", function(e) {
+// Override LocateControl’s repeated handler
+locateControl._onLocationFound = function(e) {
   const lat = e.latitude.toFixed(5);
   const lng = e.longitude.toFixed(5);
   document.getElementById("userCoord").value = `${lat},${lng}`;
   findNearby();
-});
+};
 
 function parseCSVFromBase64(encoded) {
   const decoded = atob(encoded);
