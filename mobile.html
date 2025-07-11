@@ -163,14 +163,6 @@ L.control.locate({
   }
 }).addTo(map);
 
-map.on('locationfound', function(e) {
-  const lat = e.latitude.toFixed(5);
-  const lng = e.longitude.toFixed(5);
-  document.getElementById("userCoord").value = `${lat},${lng}`;
-  findNearby();
-});
-map.locate({ setView: true, maxZoom: 18, enableHighAccuracy: true });
-
 function parseCSVFromBase64(encoded) {
   const decoded = atob(encoded);
   const lines = decoded.trim().split('\n');
