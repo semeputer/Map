@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Coordinates Locator</title>
 
-  <!-- 🔐 Login check FIRST -->
+  <!-- 🔐 Login check -->
   <script>
     if (sessionStorage.getItem("loggedIn") !== "true") {
       window.location.href = "login.html";
@@ -15,7 +15,6 @@
   <!-- Leaflet & Icons -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css"/>
 
   <style>
     html, body {
@@ -40,7 +39,6 @@
       padding: 6px 10px;
       border-radius: 5px;
       box-shadow: 0 0 4px rgba(0,0,0,0.2);
-      display: block;
     }
 
     #coordBox {
@@ -55,48 +53,52 @@
       box-shadow: 0 0 8px rgba(0,0,0,0.1);
       display: flex;
       flex-direction: column;
-      align-items: stretch;
       gap: 10px;
       color: #000;
     }
 
     #coordBox select,
-    #coordBox button {
-      padding: 10px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      width: 100%;
-    }
-
+    #coordBox button,
     #coordBox input {
       padding: 10px;
       font-size: 14px;
       border: 1px solid #ccc;
       border-radius: 5px;
+    }
+
+    #coordBox input {
       width: 93%;
     }
-    
 
     #coordBox.mobile-hidden {
       display: none !important;
     }
 
-    #themeToggle {
+    #themeToggle,
+    #locateBtn {
       position: absolute;
-      bottom: 65px;
-      right: 12px;
-      background: #fff;
       width: 31px;
       height: 30px;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: white;
       border-radius: 4px;
-      cursor: pointer;
       box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-      font-size: 16px;
       z-index: 1001;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+    }
+
+    #themeToggle {
+      bottom: 65px;
+      right: 12px;
+    }
+
+    #locateBtn {
+      bottom: 65px;
+      left: 12px;
     }
 
     body.dark-mode #coordBox {
@@ -113,6 +115,10 @@
 <body>
 
 <div id="map">
+  <button id="locateBtn" title="Get My Location">
+    <i class="fas fa-crosshairs"></i>
+  </button>
+
   <button id="mobileBurger"><i class="fas fa-bars"></i></button>
 
   <div id="coordBox" class="mobile-hidden">
@@ -122,16 +128,18 @@
       <option value="city">City</option>
       <option value="barangay">Barangay</option>
     </select>
-    <input type="text" id="userCoord" placeholder="Lat,Lng" value="" />
+    <input type="text" id="userCoord" placeholder="Lat,Lng" />
     <button id="coordSearchBtn">Search</button>
   </div>
 
   <div id="themeToggle">🌓</div>
 </div>
 
+<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
-<script src="z_data88.js"></script>
+
+<!-- Your CSV base64 data -->
+<script src="z_data88.js"></script> <!-- Must define `encodedData` -->
 
 <script>
 let csvData = [];
@@ -145,31 +153,24 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-const locateControl = L.control.locate({
-  position: 'bottomright',
-  setView: true,
-  flyTo: true,
-  keepCurrentZoomLevel: false,
-  drawCircle: true,
-  showPopup: false,
-  icon: 'fa fa-crosshairs',
-  strings: { title: "Show my location" },
-  locateOptions: {
+// One-time geolocation on button click
+document.getElementById("locateBtn").addEventListener("click", () => {
+  map.once("locationfound", function(e) {
+    const lat = e.latitude.toFixed(5);
+    const lng = e.longitude.toFixed(5);
+    document.getElementById("userCoord").value = `${lat},${lng}`;
+    findNearby();
+  });
+
+  map.locate({
+    setView: true,
     enableHighAccuracy: true,
-    maximumAge: 10000,
+    maxZoom: 18,
     timeout: 10000
-  },
-  watch: false
-}).addTo(map);
+  });
+});
 
-// Override LocateControl’s repeated handler
-locateControl._onLocationFound = function(e) {
-  const lat = e.latitude.toFixed(5);
-  const lng = e.longitude.toFixed(5);
-  document.getElementById("userCoord").value = `${lat},${lng}`;
-  findNearby();
-};
-
+// Parse CSV base64
 function parseCSVFromBase64(encoded) {
   const decoded = atob(encoded);
   const lines = decoded.trim().split('\n');
@@ -191,8 +192,7 @@ csvData = parseCSVFromBase64(encodedData);
 findNearby();
 
 document.getElementById("coordSearchBtn").addEventListener("click", () => {
-  const coordType = document.getElementById("coordType").value;
-  if (coordType === "coordinates") {
+  if (document.getElementById("coordType").value === "coordinates") {
     findNearby();
   }
 });
@@ -243,7 +243,6 @@ function findNearby() {
   csvData.forEach(point => {
     if (isNaN(point.lat) || isNaN(point.lng) || isNaN(point.utilization)) return;
     const dist = haversine(userLat, userLng, point.lat, point.lng);
-    const category = getUtilCategory(point.utilization);
     if (dist <= 0.5) {
       const color = getColor(point.utilization);
       const popupHtml = `
@@ -267,10 +266,12 @@ function findNearby() {
   });
 }
 
+// Theme toggle
 document.getElementById("themeToggle").addEventListener("click", () => {
   document.body.classList.toggle("dark-mode");
 });
 
+// Sidebar toggle
 document.getElementById("mobileBurger").addEventListener("click", () => {
   document.getElementById("coordBox").classList.toggle("mobile-hidden");
 });
