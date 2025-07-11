@@ -2,8 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nearby Coordinates Map</title>
+
+  <!-- 🔐 Immediate Login Check BEFORE anything else -->
+  <script>
+    if (localStorage.getItem("loggedIn") !== "true") {
+      window.location.href = "login.html";
+    }
+  </script>
 
   <!-- Leaflet & Icons -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -205,13 +212,6 @@
   </style>
 </head>
 <body>
-
-<!-- 🔐 Redirect if not logged in -->
-<script>
-  if (localStorage.getItem("loggedIn") !== "true") {
-    window.location.href = "login.html";
-  }
-</script>
 
 <div id="app">
   <div id="sidebar" class="collapsed">
