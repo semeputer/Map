@@ -79,6 +79,37 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
+// --- MAP TOGGLE PANEL ---
+const mapToggleBtn = document.getElementById("mapToggleBtn");
+const mapSettings = document.getElementById("mapSettings");
+
+// Slide the panel in/out
+mapToggleBtn.addEventListener("click", () => {
+  mapSettings.classList.toggle("expanded");
+});
+
+// Base layers
+const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map); // default layer
+
+const noMapLayer = L.layerGroup(); // empty layer
+
+// Map icon buttons
+document.getElementById("streetBtn").addEventListener("click", () => {
+  map.eachLayer(layer => map.removeLayer(layer));
+  streetLayer.addTo(map);
+  if (userMarker) userMarker.addTo(map);
+  markers.forEach(m => m.addTo(map));
+});
+
+document.getElementById("noneBtn").addEventListener("click", () => {
+  map.eachLayer(layer => map.removeLayer(layer));
+  noMapLayer.addTo(map);
+  if (userMarker) userMarker.addTo(map);
+  markers.forEach(m => m.addTo(map));
+});
+
 const zoomSlider = document.getElementById('zoomSlider');
 zoomSlider.value = map.getZoom();
 zoomSlider.addEventListener('input', () => map.setZoom(parseInt(zoomSlider.value)));
