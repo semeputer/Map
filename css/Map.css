@@ -230,7 +230,7 @@ html, body {
 
 /* Right-side icon panel hidden by default */
 #mapSettings {
-    position: absolute;
+    position: fixed;
     top: 50px;
     right: 55px;           /* next to the ⚙ button */
     display: flex;
@@ -278,6 +278,7 @@ html, body {
     background: #7D8488;
     color: white;
 }
+
 
 
 
