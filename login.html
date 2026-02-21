@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Log in</title>
-  <link rel="stylesheet" href="css/Login.css"> <!-- Your CSS -->
+	<title>Log in</title>
 </head>
 <body>
-  <div class="login-box">
+	<div class="login-box">
 		<h1>Log in</h1>
 		<form onsubmit="return checkLogin(event)">
 			<div class="input-group">
@@ -35,7 +32,7 @@
 				sessionStorage.setItem("loggedIn", "true");
 
 				// Redirect to Leaflet map page
-				window.location.href = "index.html";
+				window.location.href = "Map.html";
 			} else {
 				errorMsg.textContent = "Invalid username or password";
 			}
