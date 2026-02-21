@@ -203,8 +203,8 @@ html, body {
     }
 #mapToggle {
     position: fixed;        /* change from absolute -> fixed */
-    top: 100px;             /* adjust vertical position */
-    right: 20px;            /* distance from right edge of screen */
+    top: 50px;             /* adjust vertical position */
+    right: 15px;            /* distance from right edge of screen */
     z-index: 1002;          /* above map and sidebar */
     display: flex;
     flex-direction: column;
@@ -278,5 +278,6 @@ html, body {
     background: #7D8488;
     color: white;
 }
+
 
 
