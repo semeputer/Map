@@ -1,34 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login</title>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- Link external CSS -->
-  <link rel="stylesheet" href="css/Login.css">
-  
+  <title>Log in</title>
+  <link rel="stylesheet" href="css/Login.css"> <!-- Your CSS -->
 </head>
 <body>
-  <h2>Login</h2>
-  <input id="user" placeholder="Username" autocomplete="username">
-  <input id="pass" type="password" placeholder="Password" autocomplete="current-password">
-  <button onclick="login()">Login</button>
+  <div class="login-box">
+    <h1>Log in</h1>
+    <form onsubmit="return checkLogin(event)">
+      <div class="input-group">
+        <input type="text" id="username" placeholder=" " required autocomplete="username">
+        <label for="username">Username</label>
+      </div>
+      <div class="input-group">
+        <input type="password" id="password" placeholder=" " required autocomplete="current-password">
+        <label for="password">Password</label>
+      </div>
+      <button type="submit">Log in</button>
+      <div id="errorMsg" class="error"></div>
+    </form>
+  </div>
 
   <script>
-    // Always reset session when visiting or refreshing login page
-    localStorage.removeItem("loggedIn");
+    // Reset login on page load
+    sessionStorage.removeItem("loggedIn");
 
-    function login() {
-      const u = document.getElementById("user").value.trim();
-      const p = document.getElementById("pass").value.trim();
+    function checkLogin(event) {
+      event.preventDefault(); // Stop form reload
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
+      const errorMsg = document.getElementById("errorMsg");
 
-      if (u === "admin" && p === "1234") {
+      if (user === "admin" && pass === "1234") {
         sessionStorage.setItem("loggedIn", "true");
 
+        // Detect mobile vs desktop
         const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth <= 768;
         window.location.href = isMobile ? "mobile.html" : "index.html";
       } else {
-        alert("Invalid credentials");
+        errorMsg.textContent = "Invalid username or password";
       }
     }
   </script>
