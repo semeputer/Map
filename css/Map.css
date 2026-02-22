@@ -40,6 +40,10 @@ html, body {
       right: 15px;
       color: #000;
     }
+		
+	#toggleBtn:hover {
+		background: #e0e0e0;   /* lighter gray on hover */
+	}
 
     .filter-group {
       margin-top: 30px;
@@ -279,7 +283,29 @@ html, body {
     color: white;
 }
 
+#fileBtn {
+    position: absolute;
+    top: 55px;           /* ~50px below the toggle (toggle top:15px + 50px spacing) */
+    right: 13px;         /* align with toggle button */
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    transition: opacity 0.3s, transform 0.3s;
+}
 
+#fileBtn:hover {
+    background: #e0e0e0;
+}
 
-
-
+/* 🔒 Hide completely when sidebar collapsed */
+#sidebar.collapsed #fileBtn {
+	display: flex;   /* disappears when sidebar is collapsed */
+}
