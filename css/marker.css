@@ -1,0 +1,128 @@
+#mapTools {
+    position: fixed;
+    top: 88px;
+    right: 15px;
+    z-index: 1002;
+}
+
+/* MapTools main button */
+#mapToolsBtn {
+    width: 35px;
+    height: 35px;
+    border: 2px solid rgba(0,0,0,0.2);
+    border-radius: 6px;
+    background: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    position: relative; /* so the panel can be absolute relative to this */
+}
+
+/* Panel that appears horizontally */
+#mapToolsPanel {
+    position: absolute;      /* absolute relative to #mapToolsBtn */
+    top: 0;                  /* align vertically with button */
+    right: 40px;             /* push left of main button */
+    display: flex;
+    flex-direction: row;     /* horizontal buttons */
+    gap: 10px;
+	background: #fff;
+	padding: 5px 10px;
+	border-radius: 6px;
+    border: 2px solid rgba(0,0,0,0.2);
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateX(10px);  /* slide from right to left */
+}
+
+#mapTools.expanded #mapToolsPanel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+#mapToolsPanel button {
+    width: 20px;
+    height: 20px;
+    border: 0px;
+    border-radius: 0px;
+    background: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+#mapToolsPanel button:hover {
+    background: #f0f0f0;
+}
+
+#mapToolsPanel button.active {
+    background: #3498db;
+    color: white;
+}
+
+/* Modern marker form popup */
+.marker-form {
+  width: 220px;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.marker-form h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.marker-form label {
+  font-size: 11px;
+  color: #555;
+  display: block;
+  margin-top: 6px;
+}
+
+.marker-form input {
+  width: 100%;
+  padding: 6px 8px;
+  margin-top: 2px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 12px;
+  outline: none;
+}
+
+.marker-form input:focus {
+  border-color: #4a90e2;
+}
+
+.marker-form .actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.marker-form button {
+  flex: 1;
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.marker-form .ok-btn {
+  background: #4a90e2;
+  color: #fff;
+}
+
+.marker-form .cancel-btn {
+  background: #eee;
+}

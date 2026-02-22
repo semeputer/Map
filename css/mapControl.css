@@ -1,0 +1,139 @@
+    #map {
+      flex: 1;
+      height: 100%;
+      position: relative;
+    }
+
+    #coordBox {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #000;
+    }
+
+    #coordBox select, #coordBox input, #searchBtn {
+      padding: 6px 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #coordBox select {
+      width: 120px;
+    }
+
+    #coordBox input {
+      width: 160px;
+    }
+
+    .custom-zoom {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(4px);
+      padding: 6px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.3s ease;
+      opacity: 0.4;
+    }
+
+    .custom-zoom:hover {
+      opacity: 1;
+    }
+
+    .custom-zoom input[type=range] {
+      writing-mode: bt-lr;
+      -webkit-appearance: slider-vertical;
+      width: 30px;
+      height: 120px;
+      cursor: pointer;
+    }
+
+    .leaflet-control-locate {
+      width: 34px !important;
+      height: 34px !important;
+      border-radius: 4px !important;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
+      margin-top: 8px !important;
+    }
+
+    #themeToggle {
+      position: absolute;
+      bottom: 66px;
+      right: 13px;
+      background: #fff;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      font-size: 16px;
+      z-index: 1001;
+    }
+
+    #logoutBtn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #dc3545;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    #searchBtn {
+      background: #f0f0f0;
+      cursor: pointer;
+    }
+
+    body.dark-mode #sidebar {
+      background: #1e1e1e;
+      color: #fff;
+    }
+
+    body.dark-mode #coordBox {
+      background: #333;
+      color: #fff;
+    }
+
+    body.dark-mode #toggleBtn {
+      color: #fff;
+    }
+
+    body.dark-mode #searchBtn {
+      background: #444;
+      color: #fff;
+      border: 1px solid #666;
+    }
+
+    @media (max-width: 768px) {
+      #coordBox {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      #coordBox select, #coordBox input, #searchBtn {
+        width: 100%;
+      }
+
+    }
