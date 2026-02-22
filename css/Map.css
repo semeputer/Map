@@ -309,3 +309,50 @@ html, body {
 #sidebar.collapsed #fileBtn {
 	display: flex;   /* disappears when sidebar is collapsed */
 }
+
+/* File panel hidden by default */
+#filePanel {
+    position: absolute;
+    top: 55px;            /* align with file button */
+    left: 45px;           /* right side of file button */
+    display: none;        /* hidden initially */
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25); /* deeper shadow for emphasis */
+    backdrop-filter: blur(10px);           /* subtle frosted glass effect */
+    border: 1px solid rgba(0,0,0,0.1);
+    z-index: 1002;
+    min-width: 120px;
+    gap: 6px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+/* Show panel when active */
+#filePanel.show {
+    display: flex;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+#filePanel button {
+    background: linear-gradient(145deg, #2c7be5, #1a68d1);
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Hover effect */
+#filePanel button:hover {
+    background: linear-gradient(145deg, #1a68d1, #1452a0);
+    transform: translateY(-2px);
+}
