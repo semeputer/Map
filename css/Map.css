@@ -30,6 +30,28 @@ html, body {
       display: none;
     }
 
+	.sidebar-buttons {
+	  display: flex;
+	  flex-direction: column;
+	  gap: 8px;
+	  padding: 8px;
+	}
+	
+	.sidebar-buttons button {
+	  width: 42px;
+	  height: 42px;
+	  border-radius: 8px;
+	  border: none;
+	  background: #2c2c2c;
+	  color: white;
+	  cursor: pointer;
+	  font-size: 16px;
+	}
+	
+	.sidebar-buttons button:hover {
+	  background: #444;
+	}
+
     #toggleBtn {
       background: none;
       border: none;
@@ -278,6 +300,7 @@ html, body {
     background: #7D8488;
     color: white;
 }
+
 
 
 
