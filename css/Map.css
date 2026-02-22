@@ -40,7 +40,6 @@ html, body {
 	  gap: 8px;
 	  padding: 8px;
 	  align-items: flex-start;
-	  transition: align-items 0.3s ease;	
 	}
 	
 	.sidebar-buttons button {
@@ -52,6 +51,12 @@ html, body {
 	  color: white;
 	  cursor: pointer;
 	  font-size: 16px;
+	  transition: transform 0.3s ease;
+		
+	}
+
+	#sidebar.collapsed .sidebar-buttons button {
+	  transform: translateX(10px);
 	}
 	
 	.sidebar-buttons button:hover {
@@ -305,6 +310,7 @@ html, body {
     background: #7D8488;
     color: white;
 }
+
 
 
 
