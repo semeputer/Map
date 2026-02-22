@@ -25,6 +25,14 @@
 <div id="app">
   <div id="sidebar" class="collapsed">
     <button id="toggleBtn"><i class="fas fa-bars"></i></button>
+	
+	<!-- 📁 File button -->
+	 <button id="fileBtn" title="Load File">
+		<i class="fas fa-file-upload"></i>
+	</button>
+	
+	<input type="file" id="fileInput" accept=".csv" hidden />
+  
     <div class="sidebar-content">
       <div class="filter-group">
         <div class="util-toggle" onclick="toggleUtil()">
