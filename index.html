@@ -81,6 +81,15 @@
 		  <button id="noneBtn" title="No Map">🚫</button>
 		</div>
 	  </div>
+	  
+	<!-- MAP TOOLS PANEL -->
+	<div id="mapTools">
+	  <button id="mapToolsBtn" title="Map Tools">🛠️</button>
+	  <div id="mapToolsPanel">
+		<button id="addMarkerBtn" title="Add Marker">➕</button>
+		<button id="deleteMarkerBtn" title="Delete Marker">🗑️</button>
+	  </div>
+	</div>
 
 	<!-- Scripts -->
 	<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -261,6 +270,64 @@
 		function logout() {
 		  sessionStorage.removeItem("loggedIn");
 		  window.location.href = "login.html";
+		}
+		
+		// ---- MAP TOOLS PANEL LOGIC ----
+		const mapTools = document.getElementById('mapTools');
+		const mapToolsBtn = document.getElementById('mapToolsBtn');
+		const addMarkerBtn = document.getElementById('addMarkerBtn');
+		const deleteMarkerBtn = document.getElementById('deleteMarkerBtn');
+
+		let addMarkerMode = false;
+		let deleteMode = false;
+
+		// Toggle panel visibility
+		mapToolsBtn.addEventListener('click', () => {
+			mapTools.classList.toggle('expanded');
+		});
+
+		// Toggle Add Marker mode
+		addMarkerBtn.addEventListener('click', () => {
+			addMarkerMode = !addMarkerMode;
+			addMarkerBtn.classList.toggle('active', addMarkerMode);
+		});
+
+		// Toggle Delete Marker mode
+		deleteMarkerBtn.addEventListener('click', () => {
+			deleteMode = !deleteMode;
+			deleteMarkerBtn.classList.toggle('active', deleteMode);
+			if(deleteMode) {
+				deleteMarkerBtn.title = "Click markers to delete";
+			} else {
+				deleteMarkerBtn.title = "Delete Marker";
+			}
+		});
+
+		// Add marker on map click (only when Add Marker is active)
+		map.on('click', function(e) {
+			if(!addMarkerMode) return;
+			const { lat, lng } = e.latlng;
+			addCustomMarker(lat, lng);
+		});
+
+		// Make a marker deletable when Delete Mode is active
+		function makeMarkerDeletable(marker) {
+			marker.on('click', () => {
+				if(deleteMode) {
+					map.removeLayer(marker);
+					markers = markers.filter(m => m !== marker);
+				}
+			});
+		}
+
+		// Add marker function (used for Add Marker mode & CSV import)
+		function addCustomMarker(lat, lng, popupContent) {
+			const marker = L.marker([lat, lng], { draggable: true })
+				.addTo(map)
+				.bindPopup(popupContent || `Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`);
+			markers.push(marker);
+			makeMarkerDeletable(marker);
+			return marker;
 		}
 
 	</script>
