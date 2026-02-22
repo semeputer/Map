@@ -23,9 +23,20 @@
 <body>
 
 <div id="app">
-  <div id="sidebar" class="collapsed">
-    <button id="toggleBtn"><i class="fas fa-bars"></i></button>
-    <div class="sidebar-content">
+<div id="sidebar" class="collapsed">
+
+  <!-- Sidebar buttons stack -->
+  <div class="sidebar-buttons">
+    <button id="toggleBtn" title="Toggle Sidebar">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <button id="fileBtn" title="File">
+      <i class="fas fa-file"></i>
+    </button>
+  </div>
+
+  <div class="sidebar-content">
       <div class="filter-group">
         <div class="util-toggle" onclick="toggleUtil()">
           <span><i id="utilArrow" class="fas fa-chevron-down"></i> Utilization</span>
