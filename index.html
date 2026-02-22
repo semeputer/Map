@@ -17,7 +17,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css"/>
 
-  <link rel="stylesheet" href="css/Map.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="css/mapControl.css">
+  <link rel="stylesheet" href="css/panels.css">
+  <link rel="stylesheet" href="css/marker.css">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   
@@ -95,243 +99,16 @@
 	<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 	<script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
 	<script src="z_data88.js"></script>
-
-	<script>
-		let csvData = [];
-		let map = L.map('map', { zoomControl: false }).setView([14.6188, 121.0829], 16);
-		let markers = [];
-		let userMarker;
-
-		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		  attribution: '© OpenStreetMap contributors'
-		}).addTo(map);
-
-		// --- MAP TOGGLE PANEL ---
-		const mapToggleBtn = document.getElementById("mapToggleBtn");
-		const mapSettings = document.getElementById("mapSettings");
-
-		// Slide the panel in/out
-		mapToggleBtn.addEventListener("click", () => {
-		  mapSettings.classList.toggle("expanded");
-		});
-
-		// Base layers
-		const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		  attribution: '© OpenStreetMap contributors'
-		}).addTo(map); // default layer
-
-		const noMapLayer = L.layerGroup(); // empty layer
-
-		// Map icon buttons
-		document.getElementById("streetBtn").addEventListener("click", () => {
-		  map.eachLayer(layer => map.removeLayer(layer));
-		  streetLayer.addTo(map);
-		  if (userMarker) userMarker.addTo(map);
-		  markers.forEach(m => m.addTo(map));
-		});
-
-		document.getElementById("noneBtn").addEventListener("click", () => {
-		  map.eachLayer(layer => map.removeLayer(layer));
-		  noMapLayer.addTo(map);
-		  if (userMarker) userMarker.addTo(map);
-		  markers.forEach(m => m.addTo(map));
-		});
-
-		const zoomSlider = document.getElementById('zoomSlider');
-		zoomSlider.value = map.getZoom();
-		zoomSlider.addEventListener('input', () => map.setZoom(parseInt(zoomSlider.value)));
-		map.on('zoomend', () => zoomSlider.value = map.getZoom());
-
-		L.control.locate({
-		  position: 'bottomright',
-		  setView: true,
-		  flyTo: true,
-		  keepCurrentZoomLevel: true,
-		  drawCircle: true,
-		  showPopup: false,
-		  icon: 'fa fa-crosshairs',
-		  strings: { title: "Show my location" },
-		  locateOptions: { enableHighAccuracy: true }
-		}).addTo(map);
-
-		// Parse from Base64 CSV string
-		function parseCSVFromBase64(encoded) {
-		  const decoded = atob(encoded);
-		  const lines = decoded.trim().split('\n');
-		  const headers = lines[0].split(',');
-		  return lines.slice(1).map(line => {
-			const values = line.split(',');
-			const obj = {};
-			headers.forEach((h, i) => obj[h.trim()] = values[i]?.trim());
-			return {
-			  ...obj,
-			  lat: parseFloat(obj.Latitude),
-			  lng: parseFloat(obj.Longitude),
-			  utilization: parseFloat(obj.Utilization)
-			};
-		  });
-		}
-
-		csvData = parseCSVFromBase64(encodedData);
-		findNearby();
-
-		function toggleUtil() {
-		  document.getElementById("utilOptions").classList.toggle("hidden");
-		  document.getElementById("utilArrow").classList.toggle("fa-chevron-down");
-		  document.getElementById("utilArrow").classList.toggle("fa-chevron-up");
-		}
-
-		document.getElementById("toggleBtn").addEventListener("click", () => {
-		  document.getElementById("sidebar").classList.toggle("collapsed");
-		});
-
-		document.querySelectorAll('.utilFilter').forEach(cb => {
-		  cb.addEventListener('change', findNearby);
-		});
-
-		document.getElementById("searchBtn").addEventListener("click", findNearby);
-
-		function haversine(lat1, lon1, lat2, lon2) {
-		  const R = 6371;
-		  const toRad = x => x * Math.PI / 180;
-		  const dLat = toRad(lat2 - lat1);
-		  const dLon = toRad(lon2 - lon1);
-		  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-		  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-		}
-
-		function getUtilCategory(util) {
-		  if (util <= 50) return 'low';
-		  if (util <= 74) return 'mid';
-		  return 'high';
-		}
-
-		function getColor(util) {
-		  if (util <= 50) return 'green';
-		  if (util <= 74) return 'yellow';
-		  return 'red';
-		}
-
-		function findNearby() {
-		  const input = document.getElementById("userCoord").value.trim();
-		  const parts = input.split(",");
-		  if (parts.length !== 2) return;
-
-		  const userLat = parseFloat(parts[0]);
-		  const userLng = parseFloat(parts[1]);
-		  if (isNaN(userLat) || isNaN(userLng)) return;
-
-		  const selected = Array.from(document.querySelectorAll('.utilFilter:checked')).map(cb => cb.value);
-
-		  markers.forEach(m => map.removeLayer(m));
-		  markers = [];
-		  if (userMarker) map.removeLayer(userMarker);
-
-		  userMarker = L.marker([userLat, userLng], { draggable: true }).addTo(map).bindPopup("You are here").openPopup();
-		  userMarker.on("dragend", () => {
-			const { lat, lng } = userMarker.getLatLng();
-			document.getElementById("userCoord").value = `${lat.toFixed(5)},${lng.toFixed(5)}`;
-			findNearby();
-		  });
-
-		  map.setView([userLat, userLng], 18);
-
-		  csvData.forEach(point => {
-			if (isNaN(point.lat) || isNaN(point.lng) || isNaN(point.utilization)) return;
-			const dist = haversine(userLat, userLng, point.lat, point.lng);
-			const category = getUtilCategory(point.utilization);
-			if (dist <= 0.5 && selected.includes(category)) {
-			  const color = getColor(point.utilization);
-			  const popupHtml = `
-				<strong>${point.Node || 'Unknown'}</strong><br>
-				City: ${point.City || '—'}<br>
-				Equipped: ${point.Equipped || '—'}<br>
-				Working: ${point.Working || '—'}<br>
-				Available: ${point.Available || '—'}<br>
-				Utilization: ${point.utilization.toFixed(0)}%<br>
-				${dist.toFixed(3)} km<br>
-				<a href="https://www.google.com/maps/dir/${userLat},${userLng}/${point.lat},${point.lng}" target="_blank">Get Directions</a>
-			  `;
-			  const marker = L.circleMarker([point.lat, point.lng], {
-				radius: 6,
-				color: color,
-				fillColor: color,
-				fillOpacity: 0.85
-			  }).addTo(map).bindPopup(popupHtml);
-			  markers.push(marker);
-			}
-		  });
-		}
-
-		document.getElementById("themeToggle").addEventListener("click", () => {
-		  document.body.classList.toggle("dark-mode");
-		});
-
-		function logout() {
-		  sessionStorage.removeItem("loggedIn");
-		  window.location.href = "login.html";
-		}
-		
-		// ---- MAP TOOLS PANEL LOGIC ----
-		const mapTools = document.getElementById('mapTools');
-		const mapToolsBtn = document.getElementById('mapToolsBtn');
-		const addMarkerBtn = document.getElementById('addMarkerBtn');
-		const deleteMarkerBtn = document.getElementById('deleteMarkerBtn');
-
-		let addMarkerMode = false;
-		let deleteMode = false;
-
-		// Toggle panel visibility
-		mapToolsBtn.addEventListener('click', () => {
-			mapTools.classList.toggle('expanded');
-		});
-
-		// Toggle Add Marker mode
-		addMarkerBtn.addEventListener('click', () => {
-			addMarkerMode = !addMarkerMode;
-			addMarkerBtn.classList.toggle('active', addMarkerMode);
-		});
-
-		// Toggle Delete Marker mode
-		deleteMarkerBtn.addEventListener('click', () => {
-			deleteMode = !deleteMode;
-			deleteMarkerBtn.classList.toggle('active', deleteMode);
-			if(deleteMode) {
-				deleteMarkerBtn.title = "Click markers to delete";
-			} else {
-				deleteMarkerBtn.title = "Delete Marker";
-			}
-		});
-
-		// Add marker on map click (only when Add Marker is active)
-		map.on('click', function(e) {
-			if(!addMarkerMode) return;
-			const { lat, lng } = e.latlng;
-			addCustomMarker(lat, lng);
-		});
-
-		// Make a marker deletable when Delete Mode is active
-		function makeMarkerDeletable(marker) {
-			marker.on('click', () => {
-				if(deleteMode) {
-					map.removeLayer(marker);
-					markers = markers.filter(m => m !== marker);
-				}
-			});
-		}
-
-		// Add marker function (used for Add Marker mode & CSV import)
-		function addCustomMarker(lat, lng, popupContent) {
-			const marker = L.marker([lat, lng], { draggable: true })
-				.addTo(map)
-				.bindPopup(popupContent || `Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`);
-			markers.push(marker);
-			makeMarkerDeletable(marker);
-			return marker;
-		}
-
-	</script>
 	
+	<script src="js/app.js"></script>
+	<script src="js/ui.js"></script>
+	<script src="js/mapLayers.js"></script>
+	<script src="js/markerTools.js"></script>
+	<script src="js/nearby.js"></script>
+	<script src="js/mapControls.js"></script>
+	<script src="js/mapFilters.js"></script>
+	<script src="js/csvParser.js"></script>
 	<script src="js/fileImport.js"></script>
+	<script src="js/fileExport.js"></script>
 </body>
 </html>
