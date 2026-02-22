@@ -19,6 +19,8 @@
 
   <link rel="stylesheet" href="css/Map.css">
   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  
 </head>
 <body>
 
@@ -31,7 +33,7 @@
 			<i class="fas fa-file-upload"></i>
 		</button>
 		
-		<input type="file" id="fileInput" accept=".csv" hidden />
+		<input type="file" id="fileInput" accept=".csv, .xlsx, .xls" hidden />
 		
 		<!-- File options panel -->
 		<div id="filePanel">
@@ -260,21 +262,9 @@
 		  sessionStorage.removeItem("loggedIn");
 		  window.location.href = "login.html";
 		}
-		
-		const fileBtn = document.getElementById("fileBtn");
-		const filePanel = document.getElementById("filePanel");
-		
-		fileBtn.addEventListener("click", (e) => {
-			e.stopPropagation(); // prevent click from closing immediately
-			filePanel.classList.toggle("show");  // toggle modern class
-		});
-		
-		// Optional: click outside closes the panel
-		document.addEventListener("click", () => filePanel.classList.remove("show"));
-
-		// Stop panel click from closing itself
-		filePanel.addEventListener("click", (e) => e.stopPropagation());
 
 	</script>
+	
+	<script src="js/fileImport.js"></script>
 </body>
 </html>
